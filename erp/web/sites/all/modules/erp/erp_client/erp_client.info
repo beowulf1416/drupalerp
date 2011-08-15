@@ -1,0 +1,9 @@
+name = Client
+description = "Client information."
+package = ERP
+version = 1.0
+core = 7.x
+
+files[] = erp_client.db.inc
+
+configure = admin/config/erp/client

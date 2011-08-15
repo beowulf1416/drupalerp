@@ -1,0 +1,11 @@
+<?php
+
+function erp_client_install(){
+	
+	
+	
+}
+
+function erp_client_uninstall(){
+	
+}
