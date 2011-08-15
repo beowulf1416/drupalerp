@@ -2,7 +2,13 @@
 
 function erp_client_install(){
 	
-	
+	$db = new ClientDb();
+	try {
+		$db->create_tables();
+	}
+	catch(Exception $e){
+		watchdog_exception("ClientDB", $e);
+	}
 	
 }
 
