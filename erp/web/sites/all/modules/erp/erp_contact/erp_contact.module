@@ -1,1 +1,12 @@
 <?php
+function erp_contact_install(){
+	
+}
+
+function erp_contact_uninstall(){
+	
+}
+
+function erp_contact_load($contact_id){
+	
+}

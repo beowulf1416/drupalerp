@@ -9,3 +9,37 @@ function erp_client_install(){
 function erp_client_uninstall(){
 	
 }
+
+function erp_client_load($client_id){
+	
+}
+
+/**
+ * @link http://api.drupal.org/api/drupal/modules--system--system.api.php/function/hook_entity_info/7
+ */
+function erp_client_info(){
+	
+	return array(
+		"erp_client"=>array(
+			"label"=>"ERP client",
+			"label callback"=>"erp_client_label",
+			"controller class"=>"ClientController",
+			"base table"=>"erp_clients",
+			"load hook"=>"erp_client_load",
+			"uri callback"=>"erp_client_uri",
+			"fieldable"=>true,
+			"entity keys"=>array(
+				array(
+					"id"=>"client_id",
+					"bundle"=>"bundle name",
+					"label"=>"Client ID"
+				)
+			),
+			"bundle keys"=>array(
+			),
+			"bundles"=>array(
+			)
+		)
+	);
+	
+}
