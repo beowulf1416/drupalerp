@@ -1,4 +1,5 @@
-create table erp_contacts if not exists (
+/*
+create table erp_contacts (
 	id int not null auto_increment comment 'pk, contact id',
 	uid int comment 'fk, users.uid',
 	last_name varchar(500) not null,
@@ -13,7 +14,7 @@ create table erp_contacts if not exists (
 engine innodb
 comment 'contacts information table';
 
-create table erp_contact_types if not exists (
+create table erp_contact_types (
 	id int not null auto_increment comment 'pk, contact type id',
 	name varchar(100) comment 'contact information type name',
 	enabled int not null default 0 '0=enabled, otherwise disabled',
@@ -23,7 +24,7 @@ create table erp_contact_types if not exists (
 engine innodb
 comment 'contact types, eg. phone, fax';
 
-create table erp_contact_infos if not exists (
+create table erp_contact_infos (
 	id int not null auto_increment comment 'pk, contact information id',
 	contact_type_id int not null,
 	info varchar(1000) not null,
@@ -32,3 +33,4 @@ create table erp_contact_infos if not exists (
 )
 engine innodb
 comment 'contact information for a contact';
+*/

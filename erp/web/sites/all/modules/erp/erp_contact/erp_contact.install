@@ -68,6 +68,66 @@ function erp_contact_schema(){
 					"columns"=>array("client_id"=>"id")
 				)
 			)
+		),
+		"erp_contact_info_types"=>array(
+			"description"=>"contact info types",
+			"fields"=>array(
+				"id"=>array(
+					"description"=>"pk, contact info type id",
+					"type"=>"serial",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"name"=>array(
+					"type"=>"varchar",
+					"length"=>100,
+					"not null"=>true
+				),
+				"enabled"=>array(
+					"description"=>"0 if enabled, otherwise disabled",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true,
+					"default"=>0
+				)
+			),
+			"primary key"=>array(
+				"id"
+			),
+			"unique keys"=>array(
+				"idx_name"=>array("name")
+			)
+		),
+		"erp_contact_infos"=>array(
+			"description"=>"contact information",
+			"fields"=>array(
+				"contact_id"=>array(
+					"description"=>"fk, erp_contacts.id",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"contact_type_id"=>array(
+					"description"=>"fk, erp_contact_info_types.id",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"info"=>array(
+					"type"=>"varchar",
+					"length"=>1000
+				)
+			),
+			"foreign keys"=>array(
+				"erp_contact_id"=>array(
+					"table"=>"erp_contacts",
+					"columns"=>array("contact_id"=>"id")
+				),
+				"erp_contact_type_id"=>array(
+					"table"=>"erp_contact_info_types",
+					"columns"=>array("contact_type_id"=>"id")
+				)
+			)
 		)
 	);
 	
