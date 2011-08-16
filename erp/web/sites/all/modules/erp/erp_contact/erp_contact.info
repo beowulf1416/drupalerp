@@ -1,1 +1,11 @@
-<?php
+name = ERP Contacts
+description = "ERP Contacts"
+package = ERP
+version = 1.0
+core = 7.x
+
+files[] = erp_contact.db.inc
+
+configure = admin/config/erp/contact
+
+dependencies[] = erp_client
