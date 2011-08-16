@@ -10,3 +10,58 @@ function erp_contact_uninstall(){
 function erp_contact_load($contact_id){
 	
 }
+
+function erp_contact_permission(){
+	
+	return array(
+		"administer erp contacts"=>array(
+			"title"=>"Administer ERP Contacts",
+			"description"=>"Administer erp contacts"
+		)
+	);
+	
+}
+
+function erp_contact_menu(){
+	
+	return array(
+		"admin/config/erp/contact"=>array(
+			"title"=>"ERP Contact",
+			"page callback"=>"drupal_get_form",
+			"page arguments"=>array("erp_contact_config_form"),
+			"access arguments"=>array("administer erp contacts"),
+			"file"=>"erp_contact.admin.inc",
+			"type"=>MENU_NORMAL_ITEM
+		),
+		"admin/config/erp/contact/settings"=>array(
+			"title"=>"Settings",
+			"type"=>MENU_DEFAULT_LOCAL_TASK
+		)
+	);
+	
+}
+
+function erp_contact_entity_info(){
+	
+	return array(
+		"erp_contact"=>array(
+			"label"=>"ERP contact",
+			"controller class"=>"ContactController",
+			"base table"=>"erp_contacts",
+			"fieldable"=>true,
+			"entity keys"=>array(
+				"id"=>"id"
+			),
+			"bundles"=>array(
+				"erp_contact"=>array(
+					"label"=>t("Contact"),
+					"admin"=>array(
+						"path"=>"admin/config/erp/contact",
+						"access callback"=>array("administer erp contacts")
+					)
+				)
+			)
+		)
+	);
+	
+}
