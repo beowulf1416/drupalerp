@@ -37,14 +37,45 @@ function erp_contact_menu(){
 			"title"=>"Settings",
 			"type"=>MENU_DEFAULT_LOCAL_TASK
 		),
-		"erp/client/erp_client%/contact/add"=>array(
+		"erp/client/%erp_client/contact/add"=>array(
 			"title"=>"Add Contact",
 			"page callback"=>"drupal_get_form",
-			"page arguments"=>array("erp_contact_form"),
+			"page arguments"=>array("erp_contact_form",2),
 			"access callback"=>"erp_access",
-			"access arguments"=>array("administer contact"),
+			"access arguments"=>array("administer erp contacts",2),
 			"file"=>"erp_contact.pages.inc",
 			"type"=>MENU_NORMAL_ITEM
+		),
+		"erp/client/%erp_client/contact/%erp_contact"=>array(
+			"title"=>"View contact",
+			"page callback"=>"erp_contact_view",
+			"page arguments"=>array(2,4),
+			"access callback"=>"erp_access",
+			"access arguments"=>array("administer erp contacts",2),
+			"file"=>"erp_contact.pages.inc",
+			"type"=>MENU_NORMAL_ITEM
+		),
+		"erp/client/%erp_client/contact/%erp_contact/view"=>array(
+			"title"=>t("View"),
+			"type"=>MENU_DEFAULT_LOCAL_TASK
+		),
+		"erp/client/%erp_client/contact/%erp_contact/edit"=>array(
+			"title"=>t("Edit"),
+			"page callback"=>"drupal_get_form",
+			"page arguments"=>array("erp_contact_form",2,4),
+			"access callback"=>"erp_access",
+			"access arguments"=>array("administer erp contacts",2),
+			"file"=>"erp_contact.pages.inc",
+			"type"=>MENU_LOCAL_TASK
+		),
+		"erp_client/%erp_client/contact/%erp_contact/delete"=>array(
+			"title"=>t("Delete"),
+			"page callback"=>"drupal_get_form",
+			"page arguments"=>array("erp_contact_delete_form",2,4),
+			"access callback"=>"erp_access",
+			"access arguments"=>array("administer erp contacts",2),
+			"file"=>"erp_contact.pages.inc",
+			"type"=>MENU_LOCAL_TASK
 		)
 	);
 	
@@ -67,6 +98,71 @@ function erp_contact_entity_info(){
 					"admin"=>array(
 						"path"=>"admin/config/erp/contact",
 						"access arguments"=>array("administer erp contacts")
+					)
+				)
+			)
+		)
+	);
+	
+}
+
+function erp_contact_field_extra_fields(){
+	
+	return array(
+		"erp_contact"=>array(
+			"erp_contact"=>array(
+				"form"=>array(
+					"name-first"=>array(
+						"label"=>t("First name"),
+						"description"=>t("Contact's first name"),
+						"weight"=>1
+					),
+					"name-last"=>array(
+						"label"=>t("Last name"),
+						"description"=>t("Contact's last name"),
+						"weight"=>2
+					),
+					"name-middle"=>array(
+						"label"=>t("Middle name"),
+						"description"=>t("Contact's middle name"),
+						"weight"=>3
+					),
+					"name-prefix"=>array(
+						"label"=>t("Prefix"),
+						"description"=>t("Salutation"),
+						"weight"=>4
+					),
+					"name-suffix"=>array(
+						"label"=>t("Suffix"),
+						"description"=>t("Suffix"),
+						"weight"=>5
+					)
+				),
+				"display"=>array(
+					"name-first"=>array(
+						"label"=>t("First name"),
+						"description"=>t("Contact's first name"),
+						"weight"=>1
+					),
+					"name-last"=>array(
+						"label"=>t("Last name"),
+						"description"=>t("Contact's last name"),
+						"weight"=>2
+					),
+					"name-middle"=>array(
+						"label"=>t("Middle name"),
+						"description"=>t("Contact's middle name"),
+						"weight"=>3
+					),
+					"name-prefix"=>array(
+						"label"=>t("Prefix"),
+						"description"=>t("Salutation"),
+						"weight"=>4
+					),
+					"name-suffix"=>array(
+						"label"=>t("Suffix"),
+						"description"=>t("Suffix"),
+						"weight"=>5
 					)
 				)
 			)

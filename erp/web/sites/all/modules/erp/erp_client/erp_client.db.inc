@@ -1,15 +1,10 @@
 <?php
 class ClientDB {
 	
-	private $_cn;
-	
-	public function __construct(){
-		$this->_cn = Database::getConnection();
-	}
-	
-	public function modify_tables(){
+	public static function modify_tables(){
 
-		$type = $this->_cn->databaseType();
+		$cn = Database::getConnection();
+		$type = $cn->databaseType();
 		$path = DRUPAL_ROOT . "/" . drupal_get_path("module","erp_client");
 		if(file_exists("{$path}/db/{$type}.sql")){
 			$sql = file_get_contents("{$path}/db/{$type}.sql");
@@ -27,4 +22,13 @@ class ClientDB {
 		
 	}
 	
+	public static function get_client($client_id){
+		
+		return db_select("erp_clients","a")
+			->fields("a")
+			->condition("id",$client_id,"=")
+			->execute()
+			->fetchAll(PDO::FETCH_ASSOC);
+		
+	}
 }

@@ -81,6 +81,8 @@ function erp_client_menu(){
 
 function erp_client_load($client_id){
 	
+	return ClientDB::get_client($client_id);
+	
 }
 
 /**
@@ -106,6 +108,41 @@ function erp_client_entity_info(){
 					"admin"=>array(
 						"path"=>"admin/config/erp/client",
 						"access arguments"=>array("administer clients")
+					)
+				)
+			)
+		)
+	);
+	
+}
+
+function erp_client_field_extra_fields(){
+	
+	return array(
+		"erp_client"=>array(
+			"erp_client"=>array(
+				"form"=>array(
+					"name"=>array(
+						"label"=>t("Name"),
+						"description"=>t("Client name"),
+						"weight"=>1
+					),
+					"desc"=>array(
+						"label"=>t("Description"),
+						"description"=>t("Client description"),
+						"weight"=>2
+					)
+				),
+				"display"=>array(
+					"name"=>array(
+						"label"=>t("Name"),
+						"description"=>t("Client name"),
+						"weight"=>1
+					),
+					"desc"=>array(
+						"label"=>t("Description"),
+						"description"=>t("Client description"),
+						"weight"=>2
 					)
 				)
 			)
