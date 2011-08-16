@@ -39,14 +39,41 @@ function erp_client_menu(){
 		"admin/config/erp/client"=>array(
 			"title"=>"ERP Client",
 			"page callback"=>"drupal_get_form",
-			"page arguments"=>array("erp_client_form"),
+			"page arguments"=>array("erp_client_config_form"),
 			"access arguments"=>array("administer clients"),
-			"file"=>"erp_client.pages.inc",
+			"file"=>"erp_client.admin.inc",
 			"type"=>MENU_NORMAL_ITEM
 		),
 		"admin/config/erp/client/settings"=>array(
 			"title"=>"Settings",
 			"type"=>MENU_DEFAULT_LOCAL_TASK
+		),
+		"erp/client/add"=>array(
+			"title"=>"Add Client",
+			"page callback"=>"drupal_get_form",
+			"page arguments"=>array("erp_client_form"),
+			"access arguments"=>array("administer clients"),
+			"file"=>"erp_client.pages.inc",
+			"type"=>MENU_NORMAL_ITEM
+		),
+		"erp/client/%erp_client"=>array(
+			"title"=>"View Client",
+			"page callback"=>"erp_client_view",
+			"page arguments"=>array(2),
+			"file"=>"erp_client.pages.inc",
+			"type"=>MENU_NORMAL_ITEM
+		),
+		"erp/client/%erp_client/view"=>array(
+			"title"=>"View",
+			"type"=>MENU_DEFAULT_LOCAL_TASK
+		),
+		"erp/client/%erp_client/edit"=>array(
+			"title"=>"Edit",
+			"page callback"=>"drupal_get_form",
+			"page arguments"=>array("erp_client_form",2),
+			"access arguments"=>array("administer clients"),
+			"file"=>"erp_client.pages.inc",
+			"type"=>MENU_LOCAL_TASK
 		)
 	);
 	

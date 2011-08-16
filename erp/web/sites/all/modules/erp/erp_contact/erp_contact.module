@@ -36,6 +36,15 @@ function erp_contact_menu(){
 		"admin/config/erp/contact/settings"=>array(
 			"title"=>"Settings",
 			"type"=>MENU_DEFAULT_LOCAL_TASK
+		),
+		"erp/client/erp_client%/contact/add"=>array(
+			"title"=>"Add Contact",
+			"page callback"=>"drupal_get_form",
+			"page arguments"=>array("erp_contact_form"),
+			"access callback"=>"erp_access",
+			"access arguments"=>array("administer contact"),
+			"file"=>"erp_contact.pages.inc",
+			"type"=>MENU_NORMAL_ITEM
 		)
 	);
 	
