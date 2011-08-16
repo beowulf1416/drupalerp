@@ -78,7 +78,7 @@ function erp_client_entity_info(){
 					"label"=>t("Client"),
 					"admin"=>array(
 						"path"=>"admin/config/erp/client",
-						"access callback"=>array("administer clients")
+						"access arguments"=>array("administer clients")
 					)
 				)
 			)

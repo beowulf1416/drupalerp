@@ -57,7 +57,7 @@ function erp_contact_entity_info(){
 					"label"=>t("Contact"),
 					"admin"=>array(
 						"path"=>"admin/config/erp/contact",
-						"access callback"=>array("administer erp contacts")
+						"access arguments"=>array("administer erp contacts")
 					)
 				)
 			)
