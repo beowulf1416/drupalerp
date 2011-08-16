@@ -2,13 +2,13 @@
 
 function erp_client_install(){
 	
-	$db = new ClientDb();
-	try {
-		$db->create_tables();
-	}
-	catch(Exception $e){
-		watchdog_exception("ClientDB", $e);
-	}
+// 	$db = new ClientDb();
+// 	try {
+// 		$db->modify_tables();
+// 	}
+// 	catch(Exception $e){
+// 		watchdog_exception("ClientDB", $e);
+// 	}
 	
 }
 
@@ -43,6 +43,10 @@ function erp_client_menu(){
 			"access arguments"=>array("administer clients"),
 			"file"=>"erp_client.pages.inc",
 			"type"=>MENU_NORMAL_ITEM
+		),
+		"admin/config/erp/client/settings"=>array(
+			"title"=>"Settings",
+			"type"=>MENU_DEFAULT_LOCAL_TASK
 		)
 	);
 	

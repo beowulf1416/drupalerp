@@ -1,0 +1,48 @@
+<?php
+function erp_client_schema(){
+	
+	$schema = array(
+		"erp_clients"=>array(
+			"description"=>"clients information",
+			"fields"=>array(
+				"id"=>array(
+					"description"=>"pk, client id",
+					"type"=>"serial",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"name"=>array(
+					"description"=>"client name",
+					"type"=>"varchar",
+					"length"=>200,
+					"not null"=>true
+				),
+				"description"=>array(
+					"type"=>"varchar",
+					"length"=>"4000"
+				),
+				"enabled"=>array(
+					"description"=>"0 if enabled, otherwise disabled",
+					"type"=>"int",
+					"not null"=>true,
+					"default"=>0
+				),
+				"created"=>array(
+					"description"=>"timestamp of when the entry was created",
+					"type"=>"int",
+					"not null"=>true,
+					"unsigned"=>true
+				)
+			),
+			"primary key"=>array(
+				"id"
+			),
+			"unique keys"=>array(
+				"idx_name"=>array("name")
+			)
+		)
+	);
+	
+	return $schema;
+	
+}

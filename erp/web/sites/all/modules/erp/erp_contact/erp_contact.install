@@ -1,0 +1,74 @@
+<?php
+function erp_contact_schema(){
+	
+	return array(
+		"erp_contacts"=>array(
+			"description"=>"contacts",
+			"fields"=>array(
+				"id"=>array(
+					"description"=>"pk, contact id",
+					"type"=>"serial",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"client_id"=>array(
+					"description"=>"fk, erp_clients.id",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"uid"=>array(
+					"description"=>"fk, users.uid",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>false,
+				),
+				"last_name"=>array(
+					"type"=>"varchar",
+					"length"=>100,
+					"not null"=>true
+				),
+				"first_name"=>array(
+					"type"=>"varchar",
+					"length"=>100,
+					"not null"=>true
+				),
+				"middle_name"=>array(
+					"type"=>"varchar",
+					"length"=>100,
+					"not null"=>false
+				),
+				"prefix"=>array(
+					"type"=>"varchar",
+					"length"=>50,
+					"not null"=>false
+				),
+				"suffix"=>array(
+					"type"=>"varchar",
+					"length"=>50,
+					"not null"=>false
+				),
+				"created"=>array(
+					"description"=>"timestamp of when this entry was created",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				)
+			),
+			"primary key"=>array(
+				"id"
+			),
+			"foreign keys"=>array(
+				"user_id"=>array(
+					"table"=>"users",
+					"columns"=>array("uid"=>"uid")
+				),
+				"client_id"=>array(
+					"table"=>"erp_clients",
+					"columns"=>array("client_id"=>"id")
+				)
+			)
+		)
+	);
+	
+}
