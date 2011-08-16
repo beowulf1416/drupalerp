@@ -1,4 +1,42 @@
 <?php
+
+function erp_permission(){
+	
+	return array(
+		"administer erp"=>array(
+			"title"=>t("Administer ERP"),
+			"description"=>t("Administer erp")
+		)
+	);
+	
+}
+
 function erp_access(){
+	
+	if(user_is_logged_in()){
+		// TODO complete this erp_access
+		return true;
+	} else {
+		return false;
+	}
+	
+}
+
+/**
+ * 
+ * @link http://api.drupal.org/api/drupal/modules--system--system.api.php/function/hook_menu/7
+ */
+function erp_menu(){
+	
+	return array(
+		"admin/config/erp"=>array(
+			"title"=>"Enterprise Resource Planning",
+			"page callback"=>"drupal_get_form",
+			"page arguments"=>array("erp_admin_form"),
+			"access arguments"=>array("administer erp"),
+			"file"=>"erp.admin.inc",
+			"type"=>MENU_NORMAL_ITEM
+		)
+	);
 	
 }

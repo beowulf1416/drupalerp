@@ -1,1 +1,10 @@
-<?php
+name = ERP
+description = "Enterprise resource planning"
+package = ERP
+version = 1.0
+core = 7.x
+
+files[] = erp_client.db.inc
+files[] = erp_client_controller.class.inc
+
+configure = admin/config/erp

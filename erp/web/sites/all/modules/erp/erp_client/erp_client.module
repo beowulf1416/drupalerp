@@ -16,6 +16,38 @@ function erp_client_uninstall(){
 	
 }
 
+/**
+ * @link http://api.drupal.org/api/drupal/modules--system--system.api.php/function/hook_permission/7
+ */
+function erp_client_permission(){
+	
+	return array(
+		"administer clients"=>array(
+			"title"=>t("Administer ERP Client"),
+			"description"=>t("Administer erp clients")
+		)
+	);
+	
+}
+
+/**
+ * @link http://api.drupal.org/api/drupal/modules--system--system.api.php/function/hook_menu/7
+ */
+function erp_client_menu(){
+	
+	return array(
+		"admin/config/erp/client"=>array(
+			"title"=>"ERP Client",
+			"page callback"=>"drupal_get_form",
+			"page arguments"=>array("erp_client_form"),
+			"access arguments"=>array("administer clients"),
+			"file"=>"erp_client.pages.inc",
+			"type"=>MENU_NORMAL_ITEM
+		)
+	);
+	
+}
+
 function erp_client_load($client_id){
 	
 }
@@ -23,7 +55,7 @@ function erp_client_load($client_id){
 /**
  * @link http://api.drupal.org/api/drupal/modules--system--system.api.php/function/hook_entity_info/7
  */
-function erp_client_info(){
+function erp_client_entity_info(){
 	
 	return array(
 		"erp_client"=>array(
@@ -35,15 +67,16 @@ function erp_client_info(){
 			"uri callback"=>"erp_client_uri",
 			"fieldable"=>true,
 			"entity keys"=>array(
-				array(
-					"id"=>"client_id",
-					"bundle"=>"bundle name",
-					"label"=>"Client ID"
-				)
-			),
-			"bundle keys"=>array(
+				"id"=>"id"
 			),
 			"bundles"=>array(
+				"erp_client"=>array(
+					"label"=>t("Client"),
+					"admin"=>array(
+						"path"=>"admin/config/erp/client",
+						"access callback"=>array("administer clients")
+					)
+				)
 			)
 		)
 	);

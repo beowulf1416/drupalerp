@@ -1,0 +1,8 @@
+<?php
+function erp_account_install(){
+	
+}
+
+function erp_account_uninstall(){
+	
+}

@@ -1,0 +1,11 @@
+name = ERP Accounts
+description = "ERP Accounts"
+package = ERP
+version = 1.0
+core = 7.x
+
+files[] = erp_account.db.inc
+
+configure = admin/config/erp/account
+
+dependencies[] = erp_client

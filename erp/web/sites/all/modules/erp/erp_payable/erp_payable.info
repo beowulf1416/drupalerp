@@ -1,0 +1,11 @@
+name = ERP Payables
+description = "ERP Payables"
+package = ERP
+version = 1.0
+core = 7.x
+
+files[] = erp_payable.db.inc
+
+configure = admin/config/erp/payable
+
+dependencies[] = erp_account
