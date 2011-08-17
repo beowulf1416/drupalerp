@@ -22,6 +22,18 @@ class ClientDB {
 		
 	}
 	
+	public static function add_client($name, $desc){
+		
+		return db_insert("erp_clients")
+			->fields(array(
+				"name"=>$name,
+				"description"=>$desc,
+				"created"=>REQUEST_TIME
+			))
+			->execute();
+		
+	}
+	
 	public static function get_client($client_id){
 		
 		return db_select("erp_clients","a")
