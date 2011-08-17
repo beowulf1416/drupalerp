@@ -8,4 +8,5 @@ files[] = erp_contact.db.inc
 
 configure = admin/config/erp/contact
 
+dependencies[] = erp
 dependencies[] = erp_client

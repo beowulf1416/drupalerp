@@ -11,7 +11,7 @@ function erp_permission(){
 	
 }
 
-function erp_access(){
+function erp_access($permission, $client=null){
 	
 	if(user_is_logged_in()){
 		// TODO complete this erp_access
