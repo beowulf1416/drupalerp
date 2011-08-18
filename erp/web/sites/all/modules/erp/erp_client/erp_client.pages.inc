@@ -90,8 +90,6 @@ function erp_client_form_submit($form, &$form_state){
 
 function erp_client_view($client){
 	
-	return "<pre>".print_r($client,true)."</pre>";
-	
-// 	return theme("erp_client",$client);
+	return theme("erp_client_view",array("client"=>$client));
 	
 }

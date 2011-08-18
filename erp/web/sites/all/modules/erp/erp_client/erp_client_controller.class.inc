@@ -6,4 +6,10 @@
  */
 class ClientController extends DrupalDefaultEntityController {
 	
+	function attachLoad($queried_entities, $revision_id=false){
+		
+		parent::attachLoad($queried_entities, $revision_id);
+		
+	}
+	
 }

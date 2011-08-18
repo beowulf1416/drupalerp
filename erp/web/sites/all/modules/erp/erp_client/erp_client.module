@@ -58,6 +58,8 @@ function erp_client_menu(){
 		),
 		"erp/client/%erp_client"=>array(
 			"title"=>"View Client",
+			"title callback"=>"erp_client_title_callback",
+			"title arguments"=>array(2),
 			"page callback"=>"erp_client_view",
 			"page arguments"=>array(2),
 			"access callback"=>"erp_access",
@@ -82,6 +84,12 @@ function erp_client_menu(){
 	
 }
 
+function erp_client_title_callback($client){
+	
+	return $client->name;
+	
+}
+
 /**
  * 
  * @link http://api.drupal.org/api/drupal/modules--system--system.api.php/function/hook_theme/7
@@ -89,19 +97,26 @@ function erp_client_menu(){
 function erp_client_theme($existing, $type, $theme, $path){
 	
 	return array(
-		"client_view"=>array(
+		"erp_client_view"=>array(
 			"variables"=>array(
 				"client"=>null
 			),
-			"template"=>"erp-client"
+			"template"=>"erp-client-view"
 		)
 	);
 	
 }
 
-function erp_client_load($client_id){
+function erp_client_load($client_id, $reset=false){
 	
-	return ClientDB::get_client($client_id);
+	$clients = erp_client_load_multiple(array($client_id), array(), $reset);
+	return reset($clients);
+	
+}
+
+function erp_client_load_multiple($client_ids = array(), $conditions = array(), $reset=false){
+	
+	return entity_load("erp_client", $client_ids, $conditions, $reset);
 	
 }
 
