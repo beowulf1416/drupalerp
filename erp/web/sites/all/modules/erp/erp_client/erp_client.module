@@ -40,7 +40,7 @@ function erp_client_menu(){
 			"title"=>"ERP Client",
 			"page callback"=>"drupal_get_form",
 			"page arguments"=>array("erp_client_config_form"),
-			"access arguments"=>array("administer clients"),
+			"access arguments"=>array("administer erp clients"),
 			"file"=>"erp_client.admin.inc",
 			"type"=>MENU_NORMAL_ITEM
 		),
@@ -52,7 +52,7 @@ function erp_client_menu(){
 			"title"=>"Add Client",
 			"page callback"=>"drupal_get_form",
 			"page arguments"=>array("erp_client_form"),
-			"access arguments"=>array("administer clients"),
+			"access arguments"=>array("administer erp clients"),
 			"file"=>"erp_client.pages.inc",
 			"type"=>MENU_NORMAL_ITEM
 		),
@@ -60,6 +60,8 @@ function erp_client_menu(){
 			"title"=>"View Client",
 			"page callback"=>"erp_client_view",
 			"page arguments"=>array(2),
+			"access callback"=>"erp_access",
+			"access arguments"=>array("administer erp clients",2),
 			"file"=>"erp_client.pages.inc",
 			"type"=>MENU_NORMAL_ITEM
 		),
@@ -71,9 +73,27 @@ function erp_client_menu(){
 			"title"=>"Edit",
 			"page callback"=>"drupal_get_form",
 			"page arguments"=>array("erp_client_form",2),
-			"access arguments"=>array("administer clients"),
+			"access callback"=>"erp_access",
+			"access arguments"=>array("administer erp clients",2),
 			"file"=>"erp_client.pages.inc",
 			"type"=>MENU_LOCAL_TASK
+		)
+	);
+	
+}
+
+/**
+ * 
+ * @link http://api.drupal.org/api/drupal/modules--system--system.api.php/function/hook_theme/7
+ */
+function erp_client_theme($existing, $type, $theme, $path){
+	
+	return array(
+		"client_view"=>array(
+			"variables"=>array(
+				"client"=>null
+			),
+			"template"=>"erp-client"
 		)
 	);
 	
