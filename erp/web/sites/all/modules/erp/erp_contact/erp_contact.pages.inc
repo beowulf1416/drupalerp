@@ -1,6 +1,15 @@
 <?php
 function erp_contact_form($form, $form_state, $client=null, $contact=null){
 	
+	if(is_null($contact)){
+		$contact = new stdClass();
+	}
+	
+	$form["contact"] = array(
+		"#type"=>"value",
+		"#value"=>$contact
+	);
+	
 	$form["name-first"] = array(
 		"#type"=>"textfield",
 		"#title"=>t("First name"),
@@ -36,6 +45,8 @@ function erp_contact_form($form, $form_state, $client=null, $contact=null){
 		"#maxlength"=>50
 	);
 	
+	field_attach_form("erp_contact", $contact, $form, $form_state);
+	
 	$form["actions"]["save"] = array(
 		"#type"=>"submit",
 		"#value"=>t("Save"),
@@ -53,11 +64,24 @@ function erp_contact_form($form, $form_state, $client=null, $contact=null){
 }
 
 function erp_contact_form_validate($form, &$form_state){
+	
+	if($form_state["triggering_element"]["#name"] != "btn-cancel"){
+		entity_form_field_validate("erp_contact", $form, $form_state);
+	}
 
 }
 
 function erp_contact_form_submit($form, &$form_state){
 
+	switch($form_state["triggering_element"]["#name"]){
+		case "btn-save":{
+			
+			
+			
+			break;
+		}
+	}
+	
 }
 
 function erp_contact_delete_form($form, $form_state, $client=null, $contact=null){

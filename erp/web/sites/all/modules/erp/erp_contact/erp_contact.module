@@ -7,7 +7,16 @@ function erp_contact_uninstall(){
 	
 }
 
-function erp_contact_load($contact_id){
+function erp_contact_load($contact_id, $reset = false){
+	
+	$contacts = erp_contact_load_multiple(array($contact_id), array(), $reset);
+	return reset($contacts);
+	
+}
+
+function erp_contact_load_multiple($contact_ids = array(), $conditions = array(), $reset = false){
+	
+	return entity_load("erp_contact", $contact_ids, $conditions, $reset);
 	
 }
 
@@ -166,6 +175,19 @@ function erp_contact_field_extra_fields(){
 					)
 				)
 			)
+		)
+	);
+	
+}
+
+function erp_contact_theme(){
+	
+	return array(
+		"erp_contact_item"=>array(
+			"variables"=>array(
+				"contact"=>null
+			),
+			"template"=>"erp-contact-item"
 		)
 	);
 	
