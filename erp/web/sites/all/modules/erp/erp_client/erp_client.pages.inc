@@ -126,6 +126,7 @@ function erp_client_list_form($form, $form_state){
 	}
 	$form["action"] = array(
 		"#type"=>"select",
+		"#title"=>t("Action"),
 		"#options"=>$options,
 		"#required"=>true
 	);

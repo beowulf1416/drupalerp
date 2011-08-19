@@ -46,6 +46,15 @@ function erp_contact_menu(){
 			"title"=>"Settings",
 			"type"=>MENU_DEFAULT_LOCAL_TASK
 		),
+		"erp/client/%erp_client/contact/list"=>array(
+			"title"=>"Contacts",
+			"page callback"=>"drupal_get_form",
+			"page arguments"=>array("erp_contact_list_form",2),
+			"access callback"=>"erp_access",
+			"access arguments"=>array("administer erp contacts",2),
+			"file"=>"erp_contact.pages.inc",
+			"type"=>MENU_NORMAL_ITEM
+		),
 		"erp/client/%erp_client/contact/add"=>array(
 			"title"=>"Add Contact",
 			"page callback"=>"drupal_get_form",
@@ -190,5 +199,33 @@ function erp_contact_theme(){
 			"template"=>"erp-contact-item"
 		)
 	);
+	
+}
+
+function erp_contact_action_info(){
+	
+	return array(
+		"erp_contact_remove_action"=>array(
+			"type"=>"erp_contact",
+			"label"=>t("Remove ERP contact"),
+			"configurable"=>false
+		)
+	);
+	
+}
+
+function erp_contact_remove_action($contact = null, $context = null, $a1 = null, $a2 = null){
+	
+	if(!isnull($contact)){
+		try {
+			ContactDb::contact_remove($contact->id);
+			
+			drupal_set_message(t("Successfully deleted contact."));
+		}catch(Exception $e){
+			watchdog_exception("erp_contact", $e);
+			
+			drupal_set_message(t("Unable to remove contact"),"error");
+		}
+	}
 	
 }
