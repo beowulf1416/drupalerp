@@ -43,4 +43,15 @@ class ClientDB {
 			->fetchAll(PDO::FETCH_ASSOC);
 		
 	}
+	
+	public static function toggle_client_status($client_id, $enable){
+		
+		db_update("erp_clients")
+		->fields(array(
+			"enabled"=>$enable
+		))
+		->condition("id", $client_id, "=")
+		->execute();
+		
+	}
 }

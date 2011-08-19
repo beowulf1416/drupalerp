@@ -58,8 +58,8 @@ function erp_client_form_submit($form, &$form_state){
 			if(isset($client->id)){
 				
 			} else {
-				$name = $form_state["values"]["name"];
-				$desc = $form_state["values"]["desc"];
+				$name = check_plain($form_state["values"]["name"]);
+				$desc = check_plain($form_state["values"]["desc"]);
 				try {
 					$id = ClientDB::add_client($name, $desc);
 					
@@ -90,6 +90,65 @@ function erp_client_form_submit($form, &$form_state){
 
 function erp_client_view($client){
 	
-	return theme("erp_client_view",array("client"=>$client));
+	return theme("erp_client_item",array("client"=>$client));
+	
+}
+
+function erp_client_list_form($form, $form_state){
+	
+	$header = array(
+		"name"=>t("Name"),
+		"enabled"=>t("Enabled")
+	);
+	$clients = erp_client_load_multiple(false);
+	$options = array();
+	foreach($clients as $client){
+		$options[$client->id] = array(
+			"name"=>l($client->name,"erp/client/{$client->id}"),
+			"enabled"=>$client->enabled == 0 ? "True" : "False"
+		);
+	}
+	
+	$form["clients"] = array(
+		"#type"=>"tableselect",
+		"#header"=>$header,
+		"#options"=>$options,
+		"#empty"=>t("No clients available"),
+		"#multiple"=>true
+	);
+	
+	$actions = actions_get_all_actions();
+	$options = array();
+	foreach($actions as $aid=>$action){
+		if($action["type"] == "erp_client"){
+			$options[$aid] = t($action["label"]);
+		}
+	}
+	$form["action"] = array(
+		"#type"=>"select",
+		"#options"=>$options,
+		"#required"=>true
+	);
+	
+	$form["actions"]["submit"] = array(
+		"#type"=>"submit",
+		"#value"=>t("Submit"),
+		"#name"=>"btn-submit"
+	);
+	
+	return $form;
+	
+}
+
+function erp_client_list_form_validate($form, &$form_state){
+
+}
+
+function erp_client_list_form_submit($form, &$form_state){
+
+	foreach($form_state["values"]["clients"] as $client_id){
+		$client = erp_client_load($client_id);
+		actions_do($form_state["values"]["action"], $client, null, null, null);
+	}
 	
 }

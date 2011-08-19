@@ -56,6 +56,14 @@ function erp_client_menu(){
 			"file"=>"erp_client.pages.inc",
 			"type"=>MENU_NORMAL_ITEM
 		),
+		"erp/client/list"=>array(
+			"title"=>"List clients",
+			"page callback"=>"drupal_get_form",
+			"page arguments"=>array("erp_client_list_form"),
+			"access arguments"=>array("administer erp clients"),
+			"file"=>"erp_client.pages.inc",
+			"type"=>MENU_NORMAL_ITEM
+		),
 		"erp/client/%erp_client"=>array(
 			"title"=>"View Client",
 			"title callback"=>"erp_client_title_callback",
@@ -97,11 +105,17 @@ function erp_client_title_callback($client){
 function erp_client_theme($existing, $type, $theme, $path){
 	
 	return array(
-		"erp_client_view"=>array(
+		"erp_client_items"=>array(
+			"variables"=>array(
+				"clients"=>null
+			),
+			"template"=>"erp-client-items"
+		),
+		"erp_client_item"=>array(
 			"variables"=>array(
 				"client"=>null
 			),
-			"template"=>"erp-client-view"
+			"template"=>"erp-client-item"
 		)
 	);
 	
@@ -184,4 +198,55 @@ function erp_client_field_extra_fields(){
 		)
 	);
 	
+}
+
+function erp_client_action_info(){
+	
+	return array(
+		"erp_client_enable_action"=>array(
+			"type"=>"erp_client",
+			"label"=>t("Enable ERP client"),
+			"configurable"=>false,
+			"behavior"=>array("changes_property")
+		),
+		"erp_client_disable_action"=>array(
+			"type"=>"erp_client",
+			"label"=>t("Disable ERP client"),
+			"configurable"=>false,
+			"behavior"=>array("changes_property")
+		)
+	);
+	
+}
+
+function erp_client_enable_action($client = null, $context = null, $a1 = null, $a2 = null){
+	
+	if(!is_null($client)){
+		try {
+			ClientDB::toggle_client_status($client->id, 0);
+			
+			drupal_set_message(t("Successfully enabled a client"));
+		}catch(Exception $e){
+			watchdog_exception("erp_client", $e);
+			
+			drupal_set_message(t("An error occured while trying to enable a client."));
+		}
+	}
+	
+}
+
+function erp_client_disable_action($client = null, $context = null, $a1 = null, $a2 = null){
+
+	if(!is_null($client)){
+		try {
+			ClientDB::toggle_client_status($client->id, 1);
+				
+			drupal_set_message(t("Successfully disabled a client"));
+		}catch(Exception $e){
+			watchdog_exception("erp_client", $e);
+				
+			drupal_set_message(t("An error occured while trying to disable a client."));
+		}
+	}
+
 }
