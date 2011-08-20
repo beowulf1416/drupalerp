@@ -6,10 +6,10 @@ class ClientDB {
 		$cn = Database::getConnection();
 		$type = $cn->databaseType();
 		$path = DRUPAL_ROOT . "/" . drupal_get_path("module","erp_client");
-		if(file_exists("{$path}/db/{$type}.sql")){
-			$sql = file_get_contents("{$path}/db/{$type}.sql");
+		if(file_exists("{$path}/db/{$type}_post_install.sql")){
+			$sql = file_get_contents("{$path}/db/{$type}_post_install.sql");
 			if($sql != ""){			
-				$stmt = $this->_cn->prepare($sql);
+				$stmt = $cn->prepare($sql);
 				if($stmt){
 					$stmt->execute();
 				} else {

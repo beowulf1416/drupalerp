@@ -1,4 +1,3 @@
-/*
 create table erp_contacts (
 	id int not null auto_increment comment 'pk, contact id',
 	uid int comment 'fk, users.uid',
@@ -33,4 +32,3 @@ create table erp_contact_infos (
 )
 engine innodb
 comment 'contact information for a contact';
-*/
