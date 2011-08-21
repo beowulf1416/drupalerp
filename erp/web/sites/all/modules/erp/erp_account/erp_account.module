@@ -86,3 +86,74 @@ function erp_account_menu(){
 	);
 	
 }
+
+function erp_account_entity_info(){
+	
+	return array(
+		"erp_account"=>array(
+			"label"=>"ERP Account",
+			"label callback"=>"erp_account_label",
+// 			"controller class"=>"AccountController"
+			"base table"=>"erp_accounts",
+			"load hook"=>"erp_account_load",
+			"uri_callback"=>"erp_account_uri",
+			"fieldable"=>true,
+			"entity keys"=>array(
+				"id"=>"id"
+			),
+			"bundles"=>array(
+				"erp_account"=>array(
+					"label"=>t("ERP Account"),
+					"admin"=>"admin/config/erp/account",
+					"access arguments"=>array("administer erp accounts")
+				)
+			)
+		)
+	);
+	
+}
+
+function erp_account_field_extra_fields(){
+	
+	return array(
+		"erp_account"=>array(
+			"erp_account"=>array(
+				"form"=>array(
+					"name"=>array(
+						"label"=>t("Name"),
+						"description"=>t("Account name"),
+						"weight"=>1
+					),
+					"description"=>array(
+						"label"=>t("Description"),
+						"description"=>t("Account description"),
+						"weight"=>2
+					),
+					"code"=>array(
+						"label"=>t("Code"),
+						"description"=>t("Account code"),
+						"weight"=>3
+					)
+				),
+				"display"=>array(
+					"name"=>array(
+						"label"=>t("Name"),
+						"description"=>t("Account name"),
+						"weight"=>1
+					),
+					"description"=>array(
+						"label"=>t("Description"),
+						"description"=>t("Account description"),
+						"weight"=>2
+					),
+					"code"=>array(
+						"label"=>t("Code"),
+						"description"=>t("Account code"),
+						"weight"=>3
+					)					
+				)
+			)
+		)
+	);
+	
+}
