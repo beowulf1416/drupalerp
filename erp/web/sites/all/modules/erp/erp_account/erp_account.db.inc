@@ -29,6 +29,25 @@ class AccountDb {
 		
 	}
 	
+	public static function account_types_get_all(){
+		
+		$cn = Database::getConnection();
+		$sql = <<<SQL
+select id, name
+from erp_account_types
+SQL;
+		$stmt = $cn->prepare($sql);
+		if($stmt){
+			if($stmt->execute()){
+				return $stmt->fetchAll(PDO::FETCH_ASSOC);
+			} else {
+				throw new Exception("Unable to execute sql command to retrieve account types");
+			}
+		} else {
+			throw new Exception("Unable to prepare sql command to retrieve account types");
+		}
+	}
+	
 	public static function account_add($type_id, 
 		$client_id, 
 		$name, 
@@ -36,59 +55,55 @@ class AccountDb {
 		$code = ""){
 		
 		$cn = Database::getConnection();
-		try {
-			$sql = <<<SQL
+		$sql = <<<SQL
 insert into erp_accounts (client_id, name, description, code, created)
 values (:client_id, :name, :description, :code, :created);
 SQL;
 
-			$stmt = $cn->prepare($sql);
-			if($stmt){
-				if($stmt->bind_param(
-					"isssi",
-					$client_id,
-					$name,
-					$description,
-					$code,
-					REQUEST_TIME
-				)){
-					if($stmt->execute()){
-						$id = $cn->insert_id();
-						$sql = <<<SQL
+		$stmt = $cn->prepare($sql);
+		if($stmt){
+			if($stmt->bind_param(
+				"isssi",
+				$client_id,
+				$name,
+				$description,
+				$code,
+				REQUEST_TIME
+			)){
+				if($stmt->execute()){
+					$id = $cn->insert_id();
+					$sql = <<<SQL
 insert into account_balances (account_id, client_id, updated)
 values (:account_id, :client_id, :updated)
 SQL;
-						$stmt = $cn->prepare($sql);
-						if($stmt){
-							if($stmt->bind_param(
-								"iii",
-								$id,
-								$client_id,
-								REQUEST_TIME
-							)){
-								if($stmt->execute()){
-									return $id;
-								} else {
-									throw new Exception("Unable to add account balance");
-								}
+					$stmt = $cn->prepare($sql);
+					if($stmt){
+						if($stmt->bind_param(
+							"iii",
+							$id,
+							$client_id,
+							REQUEST_TIME
+						)){
+							if($stmt->execute()){
+								return $id;
 							} else {
-								throw new Exception("Unable to bind parameters to sql command to add account balance");
+								throw new Exception("Unable to add account balance");
 							}
 						} else {
-							throw new Exception("Unable to prepare sql command to add account balance");
+							throw new Exception("Unable to bind parameters to sql command to add account balance");
 						}
 					} else {
-						throw new Exception("Unable to add account");
+						throw new Exception("Unable to prepare sql command to add account balance");
 					}
 				} else {
-					throw new Exception("Unable to bind parameters to sql command to add account");
+					throw new Exception("Unable to add account");
 				}
 			} else {
-				throw new Exception("Unable to prepare sql command to add account");
+				throw new Exception("Unable to bind parameters to sql command to add account");
 			}
-			
+		} else {
+			throw new Exception("Unable to prepare sql command to add account");
 		}
-		
 	}
 	
 }

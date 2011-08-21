@@ -28,11 +28,16 @@ function erp_account_permission(){
 	
 }
 
-function erp_account_load($account, $reset = false){
+function erp_account_load($account_id, $reset = false){
+	
+	$accounts = erp_account_load_multiple($account_id, $reset);
+	return reset($accounts);
 	
 }
 
-function erp_account_load_multiple($account = array(), $conditions = array(), $reset = false){
+function erp_account_load_multiple($account_ids = array(), $conditions = array(), $reset = false){
+
+	return entity_load("erp_account", $account_ids, $conditions, $reset);
 	
 }
 
@@ -50,7 +55,7 @@ function erp_account_menu(){
 		"erp/client/%erp_client/account/list"=>array(
 			"title"=>"ERP Accounts List",
 			"page callback"=>"drupal_get_form",
-			"page arguments"=>array("erp_account_list_form"),
+			"page arguments"=>array("erp_account_list_form", 2),
 			"access arguments"=>array("administer erp accounts"),
 			"file"=>"erp_account.pages.inc",
 			"type"=>MENU_NORMAL_ITEM
@@ -104,8 +109,10 @@ function erp_account_entity_info(){
 			"bundles"=>array(
 				"erp_account"=>array(
 					"label"=>t("ERP Account"),
-					"admin"=>"admin/config/erp/account",
-					"access arguments"=>array("administer erp accounts")
+					"admin"=>array(
+						"path"=>"admin/config/erp/account",
+						"access arguments"=>array("administer erp accounts")
+					)
 				)
 			)
 		)
