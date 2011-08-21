@@ -38,7 +38,7 @@ function erp_client_schema(){
 				"id"
 			),
 			"unique keys"=>array(
-				"idx_name"=>array("name")
+				"idx_erp_client_name"=>array("name")
 			)
 		)
 	);

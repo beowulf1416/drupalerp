@@ -1,0 +1,248 @@
+<?php
+function erp_account_schema(){
+	
+	return array(
+		"erp_account_types"=>array(
+			"description"=>"account types",
+			"fields"=>array(
+				"id"=>array(
+					"description"=>"pk, account type id",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"name"=>array(
+					"description"=>"account type name",
+					"type"=>"varchar",
+					"length"=>100,
+					"not null"=>true
+				)
+			),
+			"primary key"=>array(
+				"id"
+			)
+		),
+		"erp_accounts"=>array(
+			"description"=>"erp accounts",
+			"fields"=>array(
+				"id"=>array(
+					"description"=>"pk, account id",
+					"type"=>"serial",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"type_id"=>array(
+					"description"=>"fk, erp_account_types.id",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"client_id"=>array(
+					"description"=>"fk, erp_clients.id",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"name"=>array(
+					"description"=>"account title",
+					"type"=>"varchar",
+					"length"=>100,
+					"not null"=>true
+				),
+				"description"=>array(
+					"description"=>"account description",
+					"type"=>"varchar",
+					"length"=>100,
+					"not null"=>true
+				),
+				"code"=>array(
+					"description"=>"account code",
+					"type"=>"varchar",
+					"length"=>100,
+					"not null"=>false
+				),
+				"created"=>array(
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				)
+			),
+			"primary key"=>array(
+				"id"
+			),
+			"unique keys"=>array(
+				"idx_erp_account_1"=>array(
+					"client_id",
+					"type_id",
+					"name"
+				),
+				"idx_erp_account_2"=>array(
+					"client_id",
+					"code"
+				)
+			),
+			"foreign keys"=>array(
+				"fk_erp_account_1"=>array(
+					"table"=>"erp_clients",
+					"columns"=>array("id"=>"client_id")
+				),
+				"fk_erp_account_2"=>array(
+					"table"=>"erp_account_types",
+					"columns"=>array("id"=>"type_id")
+				)
+			)
+		),
+		"erp_account_balances"=>array(
+			"description"=>"account balances metadata",
+			"fields"=>array(
+				"account_id"=>array(
+					"description"=>"fk, erp_accounts.id",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"client_id"=>array(
+					"description"=>"fk, erp_clients.id",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"updated"=>array(
+					"description"=>"timestamp last updated",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"debit"=>array(
+					"type"=>"numeric",
+					"precision"=>20,
+					"scale"=>4,
+					"not null"=>true,
+					"default"=>0
+				),
+				"credit"=>array(
+					"type"=>"numeric",
+					"precision"=>20,
+					"scale"=>4,
+					"not null"=>true,
+					"default"=>0
+				)
+			),
+			"primary key"=>array(
+				"account_id"
+			),
+			"unique keys"=>array(
+				"idx_erp_account_balances_1"=>array(
+					"client_id",
+					"account_id"
+				)
+			),
+			"foreign keys"=>array(
+				"fk_account_balances_1"=>array(
+					"table"=>"erp_clients",
+					"columns"=>array("client_id"=>"id")
+				),
+				"fk_account_balances_2"=>array(
+					"table"=>"erp_accounts",
+					"columns"=>array("account_id"=>"id")
+				)
+			)
+		),
+		"erp_account_balances_snapshots_metadata"=>array(
+			"description"=>"metadata on account balances snapshots",
+			"fields"=>array(
+				"id"=>array(
+					"description"=>"account balance snapshot id",
+					"type"=>"serial",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"client_id"=>array(
+					"description"=>"fk, erp_clients.id",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"created"=>array(
+					"description"=>"timestamp of when the snapshot was created",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				)
+			),
+			"primary key"=>array(
+				"id"
+			),
+			"foreign keys"=>array(
+				"fk_erp_acct_bal_snapshot_1"=>array(
+					"table"=>"erp_clients",
+					"columns"=>array("client_id"=>"id")
+				)
+			),
+			"indexes"=>array(
+				"idx_erp_acct_bal_snapshot_1"=>array(
+					"client_id"
+				)
+			)
+		),
+		"erp_account_balances_snapshots"=>array(
+			"description"=>"account balance snapshots",
+			"fields"=>array(
+				"snapshot_id"=>array(
+					"description"=>"fk, erp_account_balances_snapshots.id",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"client_id"=>array(
+					"description"=>"fk, erp_clients.id",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"account_id"=>array(
+					"description"=>"fk, erp_accounts.id",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"debit"=>array(
+					"type"=>"numeric",
+					"precision"=>20,
+					"scale"=>4,
+					"not null"=>true,
+					"default"=>0
+				),
+				"credit"=>array(
+					"type"=>"numeric",
+					"precision"=>20,
+					"scale"=>4,
+					"not null"=>true,
+					"default"=>0
+				)
+			),
+			"foreign keys"=>array(
+				"fk_erp_acct_bal_snapshots_1"=>array(
+					"table"=>"erp_account_balances_snapshots_metadata",
+					"columns"=>array("snapshot_id"=>"id")
+				),
+				"fk_erp_acct_bal_snapshots_2"=>array(
+					"table"=>"erp_clients",
+					"columns"=>array("client_id"=>"id")
+				),
+				"fk_erp_acct_bal_snapshots_3"=>array(
+					"table"=>"erp_accounts",
+					"columns"=>array("account_id"=>"id")
+				)
+			),
+			"indexes"=>array(
+				"idx_acct_bal_snapshots_1"=>array(
+					"snapshot_id",
+					"client_id",
+					"account_id"
+				)
+			)
+		)
+	);
+	
+}

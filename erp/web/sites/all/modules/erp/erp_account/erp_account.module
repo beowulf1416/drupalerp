@@ -1,6 +1,16 @@
 <?php
 function erp_account_install(){
 	
+	try {
+		AccountDb::modify_tables();
+		
+		drupal_set_message(t("Successfully modified ERP Account tables"));
+	}catch(Exception $e){
+		watchdog_exception("erp_account", $e);
+		
+		drupal_set_message(t("Unable to modify ERP Account tables"),"error");
+	}
+	
 }
 
 function erp_account_uninstall(){
