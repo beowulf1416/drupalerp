@@ -16,3 +16,73 @@ function erp_account_install(){
 function erp_account_uninstall(){
 	
 }
+
+function erp_account_permission(){
+	
+	return array(
+		"administer erp accounts"=>array(
+			"title"=>"Administer ERP Accounts",
+			"description"=>"Administer erp accounts"
+		)
+	);
+	
+}
+
+function erp_account_load($account, $reset = false){
+	
+}
+
+function erp_account_load_multiple($account = array(), $conditions = array(), $reset = false){
+	
+}
+
+function erp_account_menu(){
+	
+	return array(
+		"admin/config/erp/accounts"=>array(
+			"title"=>"ERP Accounts",
+			"page callback"=>"drupal_get_form",
+			"page arguments"=>array("erp_account_accounts_config_form"),
+			"access arguments"=>array("administer erp accounts"),
+			"file"=>"erp_account.admin.inc",
+			"type"=>MENU_NORMAL_ITEM
+		),
+		"erp/client/%erp_client/account/list"=>array(
+			"title"=>"ERP Accounts List",
+			"page callback"=>"drupal_get_form",
+			"page arguments"=>array("erp_account_list_form"),
+			"access arguments"=>array("administer erp accounts"),
+			"file"=>"erp_account.pages.inc",
+			"type"=>MENU_NORMAL_ITEM
+		),
+		"erp/client/%erp_client/account/add"=>array(
+			"title"=>"Add ERP Account",
+			"page callback"=>"drupal_get_form",
+			"page arguments"=>array("erp_account_form", 2),
+			"access arguments"=>array("administer erp accounts"),
+			"file"=>"erp_account.pages.inc",
+			"type"=>MENU_NORMAL_ITEM
+		),
+		"erp/client/%erp_client/account/%erp_account"=>array(
+			"title"=>"ERP Account",
+			"page callback"=>"erp_account_view",
+			"page arguments"=>array(2, 4),
+			"access arguments"=>array("administer erp accounts"),
+			"file"=>"erp_account.pages.inc",
+			"type"=>MENU_NORMAL_ITEM
+		),
+		"erp/client/%erp_client/account/%erp_account/view"=>array(
+			"title"=>"View ERP Account",
+			"type"=>MENU_DEFAULT_LOCAL_TASK
+		),
+		"erp/client/%erp_client/account/%erp_account/edit"=>array(
+			"title"=>"Edit ERP Account",
+			"page callback"=>"drupal_get_form",
+			"page arguments"=>array("erp_account_form", 2, 4),
+			"access arguments"=>array("administer erp accounts"),
+			"file"=>"erp_account.pages.inc",
+			"type"=>MENU_LOCAL_TASK
+		)
+	);
+	
+}
