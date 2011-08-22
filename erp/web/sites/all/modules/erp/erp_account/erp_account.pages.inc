@@ -81,6 +81,7 @@ function erp_account_form($form, $form_state, $client = null, $account = null){
 	}
 	$form["type"] = array(
 		"#type"=>"select",
+		"#title"=>t("Type"),
 		"#required"=>true,
 		"#options"=>$options
 	);
@@ -139,4 +140,26 @@ function erp_account_form_validate($form, &$form_state){
 
 function erp_account_form_submit($form, &$form_state){
 
+	try {
+		$account = $form_state["values"]["account"];
+		$client = $form_state["values"]["client"];
+		
+		$id = isset($account->id) ? $account->id : "";
+		$type = $form_state["values"]["type"];
+		$name = $form_state["values"]["name"];
+		$desc = $form_state["values"]["desc"];
+		$code = $form_state["values"]["code"];
+		
+		if($id == ""){
+			$account_id = AccountDb::account_add($type, $client->id, $name, $desc, $code);
+			drupal_set_message(t("Successfully added new account"));
+		} else {
+			AccountDb::account_update($id, $client->id, $name, $desc, $code);
+			drupal_set_message(t("An error has occurred while updating the account"), "error");
+		}
+		
+	}catch(Exception $e){
+		watchdog_exception("erp_account", $e);
+		drupal_set_message(t("An error has occurred while processing the account"), "error");
+	}	
 }

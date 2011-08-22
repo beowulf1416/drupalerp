@@ -89,6 +89,9 @@ function erp_contact_form_submit($form, &$form_state){
 			
 			try {
 				
+				$contact = $form_state["values"]["contact"];
+				$id = isset($contact->id) ? $contact->id : "";
+				
 				$last_name = check_plain($form_state["values"]["name-last"]);
 				$first_name = check_plain($form_state["values"]["name-first"]);
 				$middle_name = check_plain($form_state["values"]["name-middle"]);
@@ -97,14 +100,28 @@ function erp_contact_form_submit($form, &$form_state){
 				$uid = $form_state["values"]["uid"];
 				
 				$client = $form_state["values"]["client"];
-				$contact_id = ContactDb::contact_add(
-					$last_name, 
-					$first_name, 
-					$middle_name, 
-					$prefix, 
-					$suffix,
-					$client->id,
-					$uid);
+				if($id == ""){
+					$contact_id = ContactDb::contact_add(
+						$last_name, 
+						$first_name, 
+						$middle_name, 
+						$prefix, 
+						$suffix,
+						$client->id,
+						$uid
+					);
+				} else {
+					ContactDb::contact_update(
+						$contact_id, 
+						$last_name, 
+						$first_name, 
+						$middle_name, 
+						$prefix, 
+						$suffix, 
+						$client->id, 
+						$uid
+					);
+				}
 				
 				$contact = new stdClass();
 				$contact->id = $contact_id;

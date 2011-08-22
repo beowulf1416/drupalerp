@@ -59,4 +59,29 @@ class ContactDb {
 		
 	}
 	
+	public static function contact_update(
+		$contact_id,
+		$last_name,
+		$first_name,
+		$middle_name,
+		$prefix,
+		$suffix,
+		$client_id,
+		$uid){
+		
+		db_update("erp_contacts")
+		->fields(array(
+			"last_name"=>$last_name,
+			"first_name"=>$first_name,
+			"middle_name"=>$middle_name,
+			"prefix"=>$prefix,
+			"suffix"=>$suffix,
+			"client_id"=>$client_id,
+			"uid"=>$uid
+		))
+		->condition("id", $id, "=")
+		->execute();
+		
+	}
+	
 }

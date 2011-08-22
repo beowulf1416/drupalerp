@@ -7,17 +7,17 @@ insert into erp_accounts (id, name) values
 (5,'Expense');
 
 alter table erp_accounts
-add foreign key (client_id) references erp_clients(id),
-add foreign key (type_id) references erp_account_types(id);
+add constraint fk_erp_accounts_1 foreign key (client_id) references erp_clients(id),
+add constraint fk_erp_accounts_2 foreign key (type_id) references erp_account_types(id);
 
 alter table erp_account_balances
-add foreign key (account_id) references erp_accounts(id),
-add foreign key (client_id) references erp_clients(id);
+add constraint fk_erp_account_bal_1 foreign key (account_id) references erp_accounts(id),
+add constraint foreign key (client_id) references erp_clients(id);
 
 alter table erp_account_balances_snapshots_metadata
-add foreign key (client_id) references erp_clients(id);
+add constraint fk_erp_acct_bal_ss_meta_1 foreign key (client_id) references erp_clients(id);
 
 alter table erp_account_balances_snapshots
-add foreign key (client_id) references erp_clients(id),
-add foreign key (account_id) references erp_accounts(id),
-add foreign key (snapshot_id) references erp_account_balances_snapshots_metadata(id);
+add constraint fk_erp_acct_bal_ss_1 foreign key (client_id) references erp_clients(id),
+add constraint fk_erp_acct_bal_ss_2 foreign key (account_id) references erp_accounts(id),
+add constraint fk_erp_acct_bal_ss_3 foreign key (snapshot_id) references erp_account_balances_snapshots_metadata(id);
