@@ -1,5 +1,5 @@
 
-insert into erp_accounts (id, name) values 
+insert into erp_account_types (id, name) values 
 (1,'Assets'),
 (2,'Liabilities'),
 (3,'Equity'),
