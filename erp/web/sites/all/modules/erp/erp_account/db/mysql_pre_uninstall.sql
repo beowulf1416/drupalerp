@@ -5,6 +5,11 @@ alter table erp_accounts
 drop foreign key fk_erp_accounts_1,
 drop foreign key fk_erp_accounts_2;
 
+alter table erp_account_hierarchy
+drop foreign key fk_erp_acct_hierarchy_1,
+drop foreign key fk_erp_acct_hierarchy_2,
+drop foreign key fk_erp_acct_hierarchy_3;
+
 alter table erp_account_balances
 drop foreign key fk_erp_account_bal_1,
 drop foreign key fk_erp_account_bal_2;

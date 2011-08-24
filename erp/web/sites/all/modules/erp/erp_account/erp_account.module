@@ -15,8 +15,6 @@ function erp_account_install(){
 
 function erp_account_uninstall(){
 	
-	die("erp_account_uninstall");
-	
 	try {
 		AccountDb::drop_constraints();
 	}catch(Exception $e){
@@ -102,6 +100,19 @@ function erp_account_menu(){
 	
 }
 
+function erp_account_theme(){
+	
+	return array(
+		"erp_account_item"=>array(
+			"variables"=>array(
+				"account"=>null
+			),
+			"template"=>"erp-account-item"
+		)
+	);
+	
+}
+
 function erp_account_entity_info(){
 	
 	return array(
@@ -172,5 +183,9 @@ function erp_account_field_extra_fields(){
 			)
 		)
 	);
+	
+}
+
+function erp_account_action_info(){
 	
 }

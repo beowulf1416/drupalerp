@@ -31,8 +31,6 @@ class AccountDb {
 	
 	public static function drop_constraints(){
 
-		die("drop_constraints");
-		
 		$cn = Database::getConnection();
 		$type = $cn->databaseType();
 		$path = DRUPAL_ROOT . "/" . drupal_get_path("module","erp_account");
@@ -75,7 +73,8 @@ SQL;
 		$client_id, 
 		$name, 
 		$description,
-		$code = ""){
+		$code = "",
+		$parent = ""){
 		
 		db_insert("erp_accounts")
 		->fields(array(

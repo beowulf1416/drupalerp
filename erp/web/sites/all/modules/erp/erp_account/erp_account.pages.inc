@@ -83,7 +83,11 @@ function erp_account_form($form, $form_state, $client = null, $account = null){
 		"#type"=>"select",
 		"#title"=>t("Type"),
 		"#required"=>true,
-		"#options"=>$options
+		"#options"=>$options,
+		"#ajax"=>array(
+			"callback"=>"erp_account_type_change_cb",
+			"wrapper"=>"erp-acct-parent-wrapper"
+		)
 	);
 	
 	if(!is_null($account)){
@@ -113,12 +117,24 @@ function erp_account_form($form, $form_state, $client = null, $account = null){
 		"#required"=>false
 	);
 	
+	$accounts = array();
+	$type_id = isset($form_state["values"]["type"]) ? $form_state["values"]["type"] : 0;
+	if(isset($form_state["values"]["type"])){
+		$accounts = erp_account_load_multiple(array(), array("type_id"=>$form_state["values"]["type"]));
+	} else {
+		$accounts = erp_account_load_multiple(false);
+	}
 	$options = array();
+	foreach($accounts as $account){
+		$options[$account["id"]] = $account["name"];
+	}
 	$form["parent"] = array(
 		"#type"=>"select",
 		"#title"=>t("Parent Account"),
 		"#required"=>false,
-		"#options"=>$options
+		"#options"=>$options,
+		"#prefix"=>"<div id=\"erp-acct-parent-wrapper\">",
+		"#suffix"=>"</div><!-- #erp-acct-parent-wrapper -->"
 	);
 	
 	field_attach_form("erp_account", $account, $form, $form_state);
@@ -131,6 +147,12 @@ function erp_account_form($form, $form_state, $client = null, $account = null){
 	);
 	
 	return $form;
+	
+}
+
+function erp_account_type_change_cb($form, $form_state){
+	
+	return $form["parent"];
 	
 }
 

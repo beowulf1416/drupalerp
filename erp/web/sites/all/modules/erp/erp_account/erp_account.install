@@ -92,6 +92,53 @@ function erp_account_schema(){
 				)
 			)
 		),
+		"erp_account_hierarchy"=>array(
+			"description"=>"account parent child relationship",
+			"fields"=>array(
+				"client_id"=>array(
+					"description"=>"fk, erp_clients.id",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"parent_acct_id"=>array(
+					"description"=>"fk, erp_accounts.id",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"account_id"=>array(
+					"description"=>"fk, erp_accounts.id",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				)
+			),
+			"foreign keys"=>array(
+				"fk_erp_acct_hierarchy_1"=>array(
+					"table"=>"erp_clients",
+					"columns"=>array("id"=>"client_id")
+				),
+				"fk_erp_acct_hierarchy_2"=>array(
+					"table"=>"erp_accounts",
+					"columns"=>array("id"=>"account_id")
+				),
+				"fk_erp_acct_hierarchy_3"=>array(
+					"table"=>"erp_accounts",
+					"columns"=>array("id"=>"account_id")
+				)
+			),
+			"unique keys"=>array(
+				"u_idx_erp_acct_hierarchy_1"=>array(
+					"client_id",
+					"parent_acct_id"
+				),
+				"u_idx_erp_acct_hierarchy_2"=>array(
+					"client_id",
+					"account_id"
+				)
+			)
+		),
 		"erp_account_balances"=>array(
 			"description"=>"account balances metadata",
 			"fields"=>array(
