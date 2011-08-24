@@ -69,6 +69,8 @@ function erp_client_form_submit($form, &$form_state){
 					
 					entity_form_submit_build_entity("erp_client", $client, $form, $form_state);
 					
+					module_invoke_all("client_add", $client);
+					
 					drupal_set_message(t("Client information saved"));
 					
 					$form_state["redirect"] = "erp/client/{$id}/view";
