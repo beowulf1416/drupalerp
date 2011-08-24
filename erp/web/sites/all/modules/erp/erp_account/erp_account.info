@@ -5,6 +5,7 @@ version = 1.0
 core = 7.x
 
 files[] = erp_account.db.inc
+files[] = erp_account_entity_controller.inc
 
 configure = admin/config/erp/account
 

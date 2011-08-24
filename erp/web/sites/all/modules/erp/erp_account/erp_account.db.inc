@@ -74,17 +74,129 @@ SQL;
 		$name, 
 		$description,
 		$code = "",
-		$parent = ""){
+		$parent_id = ""){
 		
-		db_insert("erp_accounts")
-		->fields(array(
-			"name"=>$name,
-			"client_id"=>$client_id,
-			"desc"=>$description,
-			"code"=>$code
-		))
-		->execute();
+		$parent = $parent_id == "" ? array() : self::accounts_get_account_hierarchy($parent_id);
 		
+		$transaction = db_transaction();
+		
+		try {
+			$account_id = db_insert("erp_accounts")
+				->fields(array(
+					"name"=>$name,
+					"client_id"=>$client_id,
+					"desc"=>$description,
+					"code"=>$code
+				))
+				->execute();
+			
+			/**
+			 * adjacency list model
+			 * http://mikehillyer.com/articles/managing-hierarchical-data-in-mysql/
+			 */
+// 			db_insert("erp_account_hierarchy")
+// 				->fields(array(
+// 					"client_id"=>$client_id,
+// 					"parent_acct_id"=>$parent,
+// 					"account_id"=>$account_id
+// 				))
+// 				->execute();
+		
+			/**
+			 * nested set model
+			 * http://mikehillyer.com/articles/managing-hierarchical-data-in-mysql/
+			 */
+			
+			/**
+			 * check if there is a client root account,
+			 * create if there is none
+			 */
+			$account_root_id = 0;
+			$accounts_root = db_select("erp_accounts","a")
+				->fields("a","id")
+				->condition("client_id", $client_id, "=")
+				->condition("name", "ROOT", "=")
+				->execute();
+			switch(count($accounts_root)){
+				case 0:{
+					$account_root_id = db_insert("erp_accounts")
+						->fields(array(
+							"name"=>"ROOT",
+							"desc"=>"ROOT - {$client}",
+							"client_id"=>$client_id,
+							"code"=>""
+						))
+						->execute();
+					
+					db_insert("erp_account_hierarchy")
+						->fields(array(
+							"client_id"=>$client_id,
+							"account_id"=>$account_root_id,
+							"left_value"=>1,
+							"right_value"=>2
+						))
+						->execute();
+					
+					if($parent_id == ""){
+						$parent_id = $account_root_id;
+						$parent = array(
+							"account_id"=>$account_root_id,
+							"client_id"=>$client_id,
+							"left_value"=>1,
+							"right_value"=>2
+						);
+					}
+					
+					break;
+				}
+				case 1:{
+					$account_root_id = $accounts_root[0]["id"];
+					break;
+				}
+				default:{
+					throw new Exception("Cannot have more than 1 ROOT account");
+					break;
+				}
+			}
+
+			
+			// retrieve account at the right
+			$accounts_right = db_select("erp_account_hiearchy","a")
+				->fields("a")
+				->condition("client_id", $client_id, "=")
+				->condition("left_value", $parent["right_value"])
+				->execute();
+			$account_right = $accounts_right[0];
+			
+			db_insert("erp_account_hierarchy")
+				->fields(array(
+					"account_id"=>$account_id,
+					"left_value"=>$parent["left_value"]+1,
+					"right_value"=>$account_right["right_value"]+1
+				))
+				->execute();
+			
+			db_update("erp_account_hierarchy")
+				->fields(array(
+					"left_value"=>"left_value + 1",
+					"right_value"=>"right_value + 1"
+				))
+				->condition("client_id", $client_id, "=")
+				->condition("right_value", $account_right["right_value"], ">")
+				->execute();
+			
+			db_insert("erp_account_balances")
+				->fields(array(
+					"client_id"=>$client_id,
+					"account_id"=>$account_id,
+					"updated"=>REQUEST_TIME
+				))
+				->execute();
+			
+		} catch(Exception $e){
+			$transaction->rollback();
+			throw $e;
+		}
 	}
 	
 	public static function account_update(
@@ -103,6 +215,50 @@ SQL;
 		))
 		->condition("id", $id, "=")
 		->execute();
+		
+	}
+	
+	public static function snapshot_add($client_id){
+		
+		$transaction = db_transaction();
+		try {
+
+			$snapshot_id = db_insert("erp_account_balances_snapshots_metadata")
+				->fields(array(
+					"client_id"=>$client_id,
+					"created"=>REQUEST_TIME
+				))
+				->execute();
+			
+			$qry = db_select("erp_account_balances","a")
+				->fields("a", "client_id", "account_id", "debit", "created")
+				->addExpression($snapshot_id, "snapshot_id")
+				->condition("client_id", $client_id, "=");
+			
+			db_insert("erp_account_balances_snapshots")
+				->from($qry)
+				->execute();
+			
+		}catch(Exception $e){
+			$transaction->rollback();
+			throw $e;
+		}
+		
+	}
+	
+	public static function accounts_get_account_hierarchy($account_id){
+		
+		return db_select("erp_account_hierarchy","a")
+			->fields("a")
+			->condition("account_id", $account_id, "=")
+			->execute()
+			->fetch(PDO::FETCH_ASSOC);
+		
+	}
+	
+	public static function accounts_get_tree($parent){
+		
+		
 		
 	}
 	

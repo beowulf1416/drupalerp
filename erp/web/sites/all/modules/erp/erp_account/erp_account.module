@@ -25,6 +25,19 @@ function erp_account_uninstall(){
 	
 }
 
+function erp_account_enable(){
+	
+	// check that all clients have root accounts
+	$clients = erp_client_load_multiple(false);
+	$result = db_select("erp_accounts","a")
+		->addExpression("count(*)", "num_clients")
+		->execute();
+	
+	foreach($clients as $client){
+		
+	}
+}
+
 function erp_account_permission(){
 	
 	return array(
@@ -119,7 +132,7 @@ function erp_account_entity_info(){
 		"erp_account"=>array(
 			"label"=>"ERP Account",
 			"label callback"=>"erp_account_label",
-// 			"controller class"=>"AccountController"
+			"controller class"=>"AccountEntityController",
 			"base table"=>"erp_accounts",
 			"load hook"=>"erp_account_load",
 			"uri_callback"=>"erp_account_uri",
@@ -187,5 +200,20 @@ function erp_account_field_extra_fields(){
 }
 
 function erp_account_action_info(){
+	
+}
+
+function erp_account_client_add($client){
+	
+	
+}
+
+function erp_account_get_tree(){
+	
+	$tree = array();
+	$accounts = erp_account_load_multiple(false);
+	foreach($accounts as $account){
+		
+	}
 	
 }

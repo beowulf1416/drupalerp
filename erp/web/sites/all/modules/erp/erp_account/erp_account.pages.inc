@@ -171,14 +171,25 @@ function erp_account_form_submit($form, &$form_state){
 		$name = $form_state["values"]["name"];
 		$desc = $form_state["values"]["desc"];
 		$code = $form_state["values"]["code"];
+		$parent = $form_state["values"]["parent"];
 		
 		if($id == ""){
-			$account_id = AccountDb::account_add($type, $client->id, $name, $desc, $code);
+			$account_id = AccountDb::account_add($type, $client->id, $name, $desc, $code, $parent);
 			drupal_set_message(t("Successfully added new account"));
 		} else {
-			AccountDb::account_update($id, $client->id, $name, $desc, $code);
-			drupal_set_message(t("An error has occurred while updating the account"), "error");
+			AccountDb::account_update($id, $client->id, $name, $desc, $code, $parent);
+			drupal_set_message(t("Successfully updated the account"));
 		}
+		
+		$account = new stdClass();
+		$account->id = $id;
+		$account->type_id = $type;
+		$account->name = $name;
+		$account->description = $desc;
+		$account->code = $code;
+		$account->parent = $parent;
+		
+		entity_form_submit_build_entity("erp_account", $account, $form, $form_state);
 		
 	}catch(Exception $e){
 		watchdog_exception("erp_account", $e);

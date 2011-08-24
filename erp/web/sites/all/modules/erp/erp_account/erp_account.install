@@ -101,14 +101,34 @@ function erp_account_schema(){
 					"unsigned"=>true,
 					"not null"=>true
 				),
-				"parent_acct_id"=>array(
+				/**
+				 * adjacency list model
+				 * http://mikehillyer.com/articles/managing-hierarchical-data-in-mysql/
+				 */
+// 				"parent_acct_id"=>array(
+// 					"description"=>"fk, erp_accounts.id",
+// 					"type"=>"int",
+// 					"unsigned"=>true,
+// 					"not null"=>true
+// 				),
+				"account_id"=>array(
 					"description"=>"fk, erp_accounts.id",
 					"type"=>"int",
 					"unsigned"=>true,
 					"not null"=>true
 				),
-				"account_id"=>array(
-					"description"=>"fk, erp_accounts.id",
+				/**
+				 * nested set model
+				 * http://mikehillyer.com/articles/managing-hierarchical-data-in-mysql/
+				 */
+				"left_value"=>array(
+					"description"=>"left value, using the nested set model",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"right_value"=>array(
+					"description"=>"right value, using the nested set model",
 					"type"=>"int",
 					"unsigned"=>true,
 					"not null"=>true
@@ -129,11 +149,17 @@ function erp_account_schema(){
 				)
 			),
 			"unique keys"=>array(
+				/*
 				"u_idx_erp_acct_hierarchy_1"=>array(
 					"client_id",
 					"parent_acct_id"
 				),
 				"u_idx_erp_acct_hierarchy_2"=>array(
+					"client_id",
+					"account_id"
+				)
+				*/
+				"u_idx_erp_acct_hiearchy_1"=>array(
 					"client_id",
 					"account_id"
 				)
