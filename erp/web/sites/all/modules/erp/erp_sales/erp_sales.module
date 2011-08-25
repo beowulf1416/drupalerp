@@ -1,0 +1,12 @@
+<?php
+function erp_sales_permission(){
+	
+}
+
+function erp_sales_menu(){
+	
+}
+
+function erp_sales_entity_info(){
+	
+}

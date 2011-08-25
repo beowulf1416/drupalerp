@@ -1,0 +1,13 @@
+name = ERP Sales
+description = "ERP Sales"
+package = ERP
+version = 1.0
+core = 7.x
+
+files[] = erp_sales.db.inc
+files[] = erp_sales_entity_controller.inc
+
+configure = admin/config/erp/sales
+
+dependencies[] = erp_client
+dependencies[] = erp_inventory
