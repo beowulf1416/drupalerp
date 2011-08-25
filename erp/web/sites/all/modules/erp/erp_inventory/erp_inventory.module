@@ -1,0 +1,12 @@
+<?php
+function erp_inventory_permission(){
+	
+}
+
+function erp_inventory_menu(){
+	
+}
+
+function erp_inventory_entity_info(){
+	
+}
