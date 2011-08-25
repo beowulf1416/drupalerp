@@ -34,7 +34,7 @@ function erp_account_enable(){
 		->execute();
 	
 	foreach($clients as $client){
-		
+		// TODO finish
 	}
 }
 

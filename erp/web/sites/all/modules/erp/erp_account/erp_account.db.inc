@@ -262,4 +262,45 @@ SQL;
 		
 	}
 	
+	/**
+	 * add transactions
+	 * @param array $transactions
+	 * 	each item in the array is an associative array with the following keys
+	 * 	account_id
+	 * 	debit
+	 * 	credit
+	 */
+	public static function transaction_add($client_id, $desc, $transactions = array()){
+		
+		if(empty($transactions)){
+			throw new Exception("Cannot add empty transactions");
+		} else {
+			// TODO transaction_add
+			
+			$transaction = db_transaction();
+			try {
+				
+				// obtain transaction id
+				$transaction_id = db_insert("erp_account_transaction_metadata")
+					->fields(array(
+						"client_id"=>$client_id,
+						"description"=>check_plain($desc),
+						"created"=>REQUEST_TIME
+					))
+					->execute();
+				
+				// record transactions
+				foreach($transactions as $t){
+					// TODO transaction_add
+				}
+				
+			}catch(Exception $e){
+				$transaction->rollback();
+				throw $e;
+			}
+			
+		}
+		
+	}
+	
 }
