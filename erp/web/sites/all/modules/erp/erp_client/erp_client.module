@@ -1,21 +1,5 @@
 <?php
 
-function erp_client_install(){
-	
-// 	$db = new ClientDb();
-// 	try {
-// 		$db->modify_tables();
-// 	}
-// 	catch(Exception $e){
-// 		watchdog_exception("ClientDB", $e);
-// 	}
-	
-}
-
-function erp_client_uninstall(){
-	
-}
-
 /**
  * @link http://api.drupal.org/api/drupal/modules--system--system.api.php/function/hook_permission/7
  */
