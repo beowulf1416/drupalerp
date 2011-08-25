@@ -1,0 +1,61 @@
+<?php
+function erp_inventory_schema(){
+	
+	return array(
+		"erp_inv_items"=>array(
+			"description"=>"table of inventory items",
+			"fields"=>array(
+				"id"=>array(
+					"description"=>"pk, inventory item id",
+					"type"=>"serial",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"client_id"=>array(
+					"description"=>"fk, erp_clients.id",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"name"=>array(
+					"type"=>"varchar",
+					"length"=>200,
+					"not null"=>true
+				),
+				"description"=>array(
+					"type"=>"varchar",
+					"length"=>1000,
+					"not null"=>false
+				),
+				"created"=>array(
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				)
+			),
+			"primary key"=>array(
+				"id"
+			),
+			"foreign keys"=>array(
+				"fk_erp_inv_items_1"=>array(
+					"table"=>"erp_clients",
+					"columns"=>array("client_id"=>"id")
+				)
+			),
+			"indexes"=>array(
+				"idx_erp_inv_items_1"=>array(
+					"name"
+				)
+			)
+		)
+	);
+	
+}
+
+function erp_inventory_install(){
+	
+}
+
+function erp_inventory_uninstall(){
+	
+}

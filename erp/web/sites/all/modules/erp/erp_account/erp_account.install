@@ -315,6 +315,104 @@ function erp_account_schema(){
 					"account_id"
 				)
 			)
+		),
+		"erp_account_transaction_metadata"=>array(
+			"description"=>"account transaction metadata",
+			"fields"=>array(
+				"id"=>array(
+					"description"=>"pk, transaction id",
+					"type"=>"serial",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"client_id"=>array(
+					"description"=>"fk, erp_clients.id",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"description"=>array(
+					"type"=>"varchar",
+					"length"=>1000,
+					"not null"=>true
+				),
+				"created"=>array(
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				)
+			),
+			"primary key"=>array(
+				"id"
+			),
+			"unique keys"=>array(
+				"u_idx_erp_acct_tran_meta_1"=>array(
+					"client_id",
+					"id"
+				)
+			),
+			"foreign keys"=>array(
+				"fk_erp_acct_tran_meta_1"=>array(
+					"table"=>"erp_clients",
+					"columns"=>array("client_id"=>"id")
+				)
+			)
+		),
+		"erp_account_transactions"=>array(
+			"description"=>"account transactions",
+			"fields"=>array(
+				"transaction_id"=>array(
+					"description"=>"fk, erp_account_transaction_metadata.id",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"client_id"=>array(
+					"description"=>"fk, erp_clients.id",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"account_id"=>array(
+					"description"=>"fk, erp_accounts.id",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"debit"=>array(
+					"type"=>"numeric",
+					"precision"=>20,
+					"scale"=>4,
+					"not null"=>true
+				),
+				"credit"=>array(
+					"type"=>"numeric",
+					"precision"=>20,
+					"scale"=>4,
+					"not null"=>true
+				)
+			),
+			"unique indexes"=>array(
+				"u_idx_erp_acct_tran_1"=>array(
+					"client_id",
+					"account_id",
+					"transaction_id"
+				)
+			),
+			"foreign keys"=>array(
+				"fk_erp_acct_tran_1"=>array(
+					"table"=>"erp_account_transactions",
+					"columns"=>array("client_id"=>"id")
+				),
+				"fk_erp_acct_tran_2"=>array(
+					"table"=>"erp_accounts",
+					"columns"=>array("account_id"=>"id")
+				),
+				"fk_erp_acct_tran_3"=>array(
+					"table"=>"erp_account_transaction_metadata",
+					"columns"=>array("transaction_id"=>"id")
+				)
+			)
 		)
 	);
 	

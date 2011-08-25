@@ -1,0 +1,13 @@
+name = ERP Inventory
+description = "ERP Inventory"
+package = ERP
+version = 1.0
+core = 7.x
+
+files[] = erp_inventory.db.inc
+files[] = erp_inventory_entity_controller.inc
+
+configure = admin/config/erp/inventory
+
+dependencies[] = erp_client
+dependencies[] = erp_contact

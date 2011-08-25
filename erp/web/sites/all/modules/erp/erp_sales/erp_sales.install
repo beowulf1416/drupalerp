@@ -1,0 +1,12 @@
+<?php
+function erp_sales_schema(){
+	
+}
+
+function erp_sales_install(){
+	
+}
+
+function erp_sales_uninstall(){
+	
+}
