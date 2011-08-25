@@ -132,3 +132,22 @@ function erp_contact_schema(){
 	);
 	
 }
+
+function erp_contact_install(){
+
+	module_load_include("inc","erp_contact");
+	try {
+		ContactDB::modify_tables();
+
+		drupal_set_message(t("Modified erp_client tables"));
+	}catch(Exception $e){
+		watchdog_exception("erp_contact", $e);
+
+		drupal_set_message(t("Unable to modify erp_client tables"),"error");
+	}
+
+}
+
+function erp_contact_uninstall(){
+
+}

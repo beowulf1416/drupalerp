@@ -1,22 +1,4 @@
 <?php
-function erp_contact_install(){
-	
-	try {
-		ContactDB::modify_tables();
-		
-		drupal_set_message(t("Modified erp_client tables"));
-	}catch(Exception $e){
-		watchdog_exception("erp_contact", $e);
-		
-		drupal_set_message(t("Unable to modify erp_client tables"),"error");
-	}
-	
-}
-
-function erp_contact_uninstall(){
-	
-}
-
 function erp_contact_load($contact_id, $reset = false){
 	
 	$contacts = erp_contact_load_multiple(array($contact_id), array(), $reset);
