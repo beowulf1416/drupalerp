@@ -1,4 +1,17 @@
 <?php
+function erp_account_autocomplete($client, $sz){
+	
+	$matches = array();
+	if($sz != ""){
+		$accounts = AccountDb::account_get_all_like_name($client->id, $sz);
+		foreach($accounts as $account){
+			$matches[$account["id"]] = $account["name"];
+		}
+	}
+	return $matches;
+	
+}
+
 function erp_account_view($client, $account){
 	
 	$out = "<h2>".t("ERP Account View")."</h2>";

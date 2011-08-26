@@ -19,6 +19,10 @@ function erp_account_permission(){
 		"administer erp accounts"=>array(
 			"title"=>"Administer ERP Accounts",
 			"description"=>"Administer erp accounts"
+		),
+		"view erp accounts"=>array(
+			"title"=>"View ERP Accounts",
+			"description"=>"View erp accounts"
 		)
 	);
 	
@@ -47,6 +51,14 @@ function erp_account_menu(){
 			"access arguments"=>array("administer erp accounts"),
 			"file"=>"erp_account.admin.inc",
 			"type"=>MENU_NORMAL_ITEM
+		),
+		"erp/client/%erp_client/account/autocomplete/%"=>array(
+			"title"=>"ERP Accounts autocomplete",
+			"page callback"=>"erp_account_autocomplete",
+			"page arguments"=>array(2,5),
+			"access arguments"=>"view erp accounts",
+			"file"=>"erp_account.pages.inc",
+			"type"=>MENU_CALLBACK
 		),
 		"erp/client/%erp_client/account/list"=>array(
 			"title"=>"ERP Accounts List",

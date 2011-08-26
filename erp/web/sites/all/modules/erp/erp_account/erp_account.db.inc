@@ -218,6 +218,20 @@ SQL;
 		
 	}
 	
+	public static function account_get_all_like_name($client_id, $name, $limit = false){
+		
+		$qry = db_select("erp_accounts","a")
+			->fields("a")
+			->condition("client_id", $client_id, "=")
+			->condition("name", $name, "like");
+		if($limit !== false){
+			$qry->range(0, $limit);
+		}
+		$results = $qry->execute();
+		return $results;
+		
+	}
+	
 	public static function snapshot_add($client_id){
 		
 		$transaction = db_transaction();
