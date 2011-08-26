@@ -277,29 +277,67 @@ SQL;
 		} else {
 			// TODO transaction_add
 			
-			$transaction = db_transaction();
-			try {
-				
-				// obtain transaction id
-				$transaction_id = db_insert("erp_account_transaction_metadata")
-					->fields(array(
-						"client_id"=>$client_id,
-						"description"=>check_plain($desc),
-						"created"=>REQUEST_TIME
-					))
-					->execute();
-				
-				// record transactions
-				foreach($transactions as $t){
-					// TODO transaction_add
+			if(self::validate_transactions($transactions)){
+			
+				$transaction = db_transaction();
+				try {
+					
+					// obtain transaction id
+					$transaction_id = db_insert("erp_account_transaction_metadata")
+						->fields(array(
+							"client_id"=>$client_id,
+							"description"=>check_plain($desc),
+							"created"=>REQUEST_TIME
+						))
+						->execute();
+					
+					// record transactions
+					foreach($transactions as $t){
+						db_insert("erp_account_transactions")
+						->fields(array(
+							"transaction_id"=>$transaction_id,
+							"client_id"=>$id,
+							"account_id"=>$transaction["account_id"],
+							"debit"=>$transaction["debit"],
+							"credit"=>$transaction["credit"]
+						))
+						->execute();
+					}
+					
+				}catch(Exception $e){
+					$transaction->rollback();
+					throw $e;
 				}
-				
-			}catch(Exception $e){
-				$transaction->rollback();
-				throw $e;
 			}
 			
 		}
+		
+	}
+	
+	private static function validate_transactions($transactions = array()){
+
+		$debit = 0;
+		$credit = 0;
+		foreach($transactions as $transaction){
+			
+			if(!isset($transaction["account_id"])){
+				return false;
+			}
+			
+			if($transaction["debit"] > 0 && $transaction["credit"] > 0){
+				return false;
+			}
+			
+			$debit += $transaction["debit"];
+			$credit += $transaction["credit"];
+			
+		}
+		
+		if($debit != $credit){
+			return false;
+		}
+		
+		return true;
 		
 	}
 	
