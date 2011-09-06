@@ -36,7 +36,7 @@ function survey_edit_form($form, $form_state, $survey = null){
 		"#default_value"=>true
 	);
 	
-	if(!is_null($survey) && $form_state["values"]["user-pages"]){
+	if(!is_null($survey) && isset($form_state["values"]["user-pages"])){
 		$form["link-survey-pages-add"] = array(
 			"#markup"=>l("Add survey page","survey/{$survey->id}/page/add")
 		);
@@ -58,6 +58,15 @@ function survey_edit_form($form, $form_state, $survey = null){
 		);
 	}
 	
+	if(!is_null($survey)){
+		$form["closed"] = array(
+			"#type"=>"checkbox",
+			"#title"=>t("This survey is closed"),
+			"#required"=>false,
+			"#default_value"=>false
+		);
+	}
+	
 	return $form;
 	
 }
@@ -67,6 +76,18 @@ function survey_edit_form_validate($form, &$form_state){
 }
 
 function survey_edit_form_submit($form, &$form_state){
+
+}
+
+function survey_page_form($form, $form_state, $survey = null, $page = null){
+	
+}
+
+function survey_page_form_validate($form, &$form_state){
+
+}
+
+function survey_page_form_submit($form, &$form_state){
 
 }
 
