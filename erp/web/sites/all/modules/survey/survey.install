@@ -29,7 +29,7 @@ function survey_schema(){
 				"closed"=>array(
 					"type"=>"int",
 					"unsigned"=>true,
-					"not null"=>true
+					"not null"=>false
 				)
 			),
 			"primary key"=>array(

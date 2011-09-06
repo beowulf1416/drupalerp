@@ -154,6 +154,29 @@ function survey_question_load_multiple(){
 	
 }
 
+function survey_theme($existing, $type, $theme, $path){
+	
+	return array(
+		"survey_list"=>array(
+			"variables"=>array(
+				"surveys"=>null
+			),
+			"template"=>"templates/survey-list"
+		)
+	);
+	
+}
+
+function survey_get_all(){
+	
+}
+
+function survey_add($title, $desc){
+	
+	SurveyDb::survey_add($title, $desc);
+	
+}
+
 function survey_get_questions($survey_id){
 	
 }

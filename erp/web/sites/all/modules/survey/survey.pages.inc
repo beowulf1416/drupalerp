@@ -1,4 +1,11 @@
 <?php
+function survey_list(){
+	
+	$surveys = SurveyDb::get_all_surveys();
+	return theme("survey_list",$surveys);
+	
+}
+
 function survey_form($form, $form_state, $survey = null){
 
 	$form["survey"] = array(
@@ -29,6 +36,19 @@ function survey_edit_form($form, $form_state, $survey = null){
 		"#value"=>$survey
 	);
 	
+	$form["title"] = array(
+		"#type"=>"textfield",
+		"#title"=>t("Title"),
+		"#required"=>true,
+		"#default_value"=>""
+	);
+	
+	$form["desc"] = array(
+		"#type"=>"textarea",
+		"#title"=>t("Description"),
+		"#default_value"=>""
+	);
+	
 	$form["use-pages"] = array(
 		"#type"=>"checkbox",
 		"#title"=>t("Use pages (wizard)"),
@@ -36,7 +56,7 @@ function survey_edit_form($form, $form_state, $survey = null){
 		"#default_value"=>true
 	);
 	
-	if(!is_null($survey) && isset($form_state["values"]["user-pages"])){
+	if($survey == null && isset($form_state["values"]["user-pages"])){
 		$form["link-survey-pages-add"] = array(
 			"#markup"=>l("Add survey page","survey/{$survey->id}/page/add")
 		);
@@ -52,13 +72,13 @@ function survey_edit_form($form, $form_state, $survey = null){
 		),
 		"#options"=>$options
 	);
-	if(!is_null($survey)){
+	if($survey == null){
 		$form["link-survey-questions-add"] = array(
 			"#markup"=>l("Add question","survey/{$survey->id}/question/add")
 		);
 	}
 	
-	if(!is_null($survey)){
+	if($survey == null){
 		$form["closed"] = array(
 			"#type"=>"checkbox",
 			"#title"=>t("This survey is closed"),
@@ -66,6 +86,18 @@ function survey_edit_form($form, $form_state, $survey = null){
 			"#default_value"=>false
 		);
 	}
+	
+	$form["actions"]["cancel"] = array(
+		"#type"=>"submit",
+		"#name"=>"btn-cancel",
+		"#value"=>t("Cancel")
+	);
+	
+	$form["actions"]["save"] = array(
+		"#type"=>"submit",
+		"#name"=>"btn-save",
+		"#value"=>t("Save")
+	);
 	
 	return $form;
 	
@@ -77,6 +109,22 @@ function survey_edit_form_validate($form, &$form_state){
 
 function survey_edit_form_submit($form, &$form_state){
 
+	switch($form_state["triggering_element"]["#name"]){
+		case "btn-save":{
+			
+			try {
+				$title = $form_state["values"]["title"];
+				$desc = $form_state["values"]["desc"];
+				survey_add($title, $desc);
+				drupal_set_message(t("Survey saved"));
+			}catch(Exception $e){
+				watchdog_exception("survey", $e);
+				drupal_set_message(t("An error occurred while saving the survey."));
+			}
+			break;
+		}
+	}
+	
 }
 
 function survey_page_form($form, $form_state, $survey = null, $page = null){
