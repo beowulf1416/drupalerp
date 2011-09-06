@@ -100,7 +100,7 @@ function erp_account_menu(){
 	
 }
 
-function erp_account_theme(){
+function erp_account_theme($existing, $type, $theme, $path){
 	
 	return array(
 		"erp_account_item"=>array(
