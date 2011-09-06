@@ -1,0 +1,86 @@
+<?php
+function survey_permissions(){
+	return array(
+		"administer survey"=>array(
+			"title"=>"Administer survey configuration",
+			"description"=>"Modify survey module configuration"
+		),
+		"create survey"=>array(
+			"title"=>"Create/modify survey",
+			"description"=>"create/modify surveys"
+		)
+	);
+}
+
+function survey_menu(){
+	return array(
+		"admin/config/survey"=>array(
+			"title"=>"Survey Admin",
+			"page callback"=>"drupal_get_form",
+			"page arguments"=>"survey_admin_form",
+			"access arguments"=>array("administer survey"),
+			"file"=>"survey.admin.inc",
+			"type"=>MENU_NORMAL_ITEM
+		),
+		"survey/list"=>array(
+		),
+		"survey/add"=>array(
+		),
+		"survey/%survey"=>array(
+			"title callback"=>"survey_callback_title",
+			"title arguments"=>array(1),
+			"page callback"=>"drupal_get_form",
+			"page arguments"=>array(1),
+			"access arguments"=>array("view survey"),
+			"file"=>"survey.pages.inc",
+			"type"=>MENU_NORMAL_ITEM
+		),
+		"survey/%survey/view"=>array(
+			"title"=>"View",
+			"type"=>MENU_DEFAULT_LOCAL_TASK
+		),
+		"survey/%survey/edit"=>array(
+			"title"=>"Edit",
+			"page arguments"=>"drupal_get_form",
+			"page arguments"=>array(1),
+			"access arguments"=>"create survey",
+			"file"=>"survey.pages.inc"
+		),
+		"survey/%survey/question/list"=>array(
+		),
+		"survey/%survey/question/add"=>array(
+		),
+		"survey/%survey/question/%survey_question"=>array(
+		),
+		"survey/%survey/question/%survey_question/view"=>array(
+		),
+		"survey/%survey/question/%survey_question/edit"=>array(
+		),
+		"survey/%survey/page/list"=>array(
+		),
+		"survey/%survey/page/add"=>array(
+		),
+		"survey/%survey/page/%survey_page"=>array(
+		),
+		"survey/%survey/page/%survey_page/view"=>array(
+		),
+		"survey/%survey/page/%survey_page/edit"=>array(
+		)
+	);
+}
+
+function survey_load($survey_id){
+	
+}
+
+function survey_load_multiple(){
+	
+}
+
+function survey_callback_title($survey){
+	
+}
+
+function survey_get_questions($survey_id){
+	
+}

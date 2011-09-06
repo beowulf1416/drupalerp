@@ -1,0 +1,254 @@
+<?php
+function survey_schema(){
+
+	return array(
+		"surveys"=>array(
+			"description"=>"table of surveys",
+			"fields"=>array(
+				"id"=>array(
+					"description"=>"pk, survey id",
+					"type"=>"serial",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"title"=>array(
+					"description"=>"survey title",
+					"type"=>"varchar",
+					"length"=>100,
+					"not null"=>true
+				),
+				"description"=>array(
+					"type"=>"text",
+					"not null"=>false
+				)
+			),
+			"primary key"=>array(
+				"id"
+			)
+		),
+		"survey_pages"=>array(
+			"description"=>"table of survey pages",
+			"fields"=>array(
+				"survey_id"=>array(
+					"description"=>"fk, surveys.id",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"id"=>array(
+					"description"=>"pk, survey page id",
+					"type"=>"serial",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"title"=>array(
+					"description"=>"survey page title",
+					"type"=>"varchar",
+					"length"=>100,
+					"not null"=>true
+				),
+				"weight"=>array(
+					"description"=>"survey page weight",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				)
+			)
+		),
+		"survey_question_types"=>array(
+			"description"=>"survey question types table",
+			"fields"=>array(
+				"id"=>array(
+					"description"=>"pk, survey question type id",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				)
+			)
+		),
+		"survey_questions"=>array(
+			"description"=>"table of survey questions",
+			"fields"=>array(
+				"id"=>array(
+					"description"=>"pk, question id",
+					"type"=>"serial",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"survey_id"=>array(
+					"description"=>"fk, surveys.id",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"page_id"=>array(
+					"description"=>"fk, survey_pages.id",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true,
+					"default"=>0
+				),
+				"weight"=>array(
+					"description"=>"the order that this question appears in, larger values last",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true,
+					"default"=>0
+				),
+				"name"=>array(
+					"description"=>"question identifier",
+					"type"=>"varchar",
+					"length"=>100,
+					"not null"=>true
+				),
+				"type_id"=>array(
+					"description"=>"fk, survey_question_types.id",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"text"=>array(
+					"description"=>"question text",
+					"type"=>"text",
+					"not null"=>true
+				)
+			),
+			"primary key"=>array(
+				"id"
+			),
+			"unique keys"=>array(
+				"u_idx_survey_questions_1"=>array(
+					"survey_id",
+					"id",
+					"name"
+				)
+			),
+			"indexes"=>array(
+				"idx_survey_questions_1"=>array(
+					"survey_id"
+				),
+				"idx_survey_questions_2"=>array(
+					"page_id"
+				)
+			),
+			"foreign keys"=>array(
+				"fk_survey_questions_1"=>array(
+					"table"=>"surveys",
+					"columns"=>array("survey_id"=>"id")
+				),
+				"fk_survey_questions_2"=>array(
+					"table"=>"survey_pages",
+					"columns"=>array("page_id"=>"id")
+				),
+				"fk_survey_questions_3"=>array(
+					"table"=>"survey_question_types",
+					"columns"=>array("type_id"=>"id")
+				)
+			)
+		),
+		"survey_question_dependency"=>array(
+			"description"=>"table of question dependencies",
+			"fields"=>array(
+				"survey_id"=>array(
+					"description"=>"fk, surveys.id",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"question_id"=>array(
+					"description"=>"fk, survey_questions.id",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"depends_question_id"=>array(
+					"description"=>"fk, survey_questions.id",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"condition"=>array(
+					"description"=>"condition",
+					"type"=>"varchar",
+					"length"=>200,
+					"not null"=>false
+				)
+			),
+			"primary key"=>array(
+				"survey_id",
+				"question_id",
+				"depends_question_id"
+			),
+			"foreign keys"=>array(
+				"fk_survey_question_dependency_1"=>array(
+					"table"=>"surveys",
+					"columns"=>array("survey_id"=>"id")
+				),
+				"fk_survey_question_dependency_2"=>array(
+					"table"=>"survey_questions",
+					"columns"=>array("question_id"=>"id")
+				),
+				"fk_survey_question_dependecy_3"=>array(
+					"table"=>"survey_questions",
+					"columns"=>array("depends_question_id"=>"id")
+				)
+			)
+		),
+		"survey_question_options"=>array(
+			"description"=>"table of question selection options",
+			"fields"=>array(
+				"survey_id"=>array(
+					"description"=>"fk, surveys.id",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"question_id"=>array(
+					"description"=>"fk, survey_questions.id",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				),
+				"title"=>array(
+					"description"=>"selection title",
+					"type"=>"varchar",
+					"length"=>100,
+					"not null"=>true
+				),
+				"value"=>array(
+					"description"=>"selection value",
+					"type"=>"varchar",
+					"length"=>100,
+					"not null"=>true
+				)
+			),
+			"indexes"=>array(
+				"idx_survey_question_options_1"=>array(
+					"survey_id"
+				),
+				"idx_survey_question_options_2"=>array(
+					"question_id"
+				)
+			),
+			"foreign keys"=>array(
+				"fk_survey_question_options_1"=>array(
+					"table"=>"surveys",
+					"columns"=>array("survey_id"=>"id")
+				),
+				"fk_survey_question_options_2"=>array(
+					"table"=>"surveys",
+					"columns"=>array("question_id"=>"id")
+				)
+			)
+		)
+	);
+	
+}
+
+function survey_install(){
+	
+}
+
+function survey_uninstall(){
+	
+}
