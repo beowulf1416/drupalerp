@@ -51,7 +51,7 @@ function survey_edit_form($form, $form_state, $survey = null){
 		"#default_value"=>$survey == null ? "" : $survey->description
 	);
 	
-	if($survey != null){
+	if(isset($survey)){
 		$form["link-survey-pages-add"] = array(
 			"#markup"=>l("Add survey page","survey/{$survey->id}/page/add")
 		);
@@ -66,10 +66,10 @@ function survey_edit_form($form, $form_state, $survey = null){
 			"type"=>t("Type")
 		),
 		"#options"=>$options,
-		"#empty"=>$survey == null ? t("No questions") : l("Add question","survey/{$survey->id}/question/add")
+		"#empty"=>isset($survey) ? l("Add question","survey/{$survey->id}/question/add") : t("No questions")
 	);
 	
-	if($survey != null){
+	if(isset($survey)){
 		$form["closed"] = array(
 			"#type"=>"checkbox",
 			"#title"=>t("This survey is closed"),
@@ -106,8 +106,10 @@ function survey_edit_form_submit($form, &$form_state){
 			try {
 				$title = $form_state["values"]["title"];
 				$desc = $form_state["values"]["desc"];
-				survey_add($title, $desc);
+				$survey_id = survey_add($title, $desc);
 				drupal_set_message(t("Survey saved"));
+				
+				$form_state["redirect"] = "survey/{$survey_id}/edit";
 			}catch(Exception $e){
 				watchdog_exception("survey", $e);
 				drupal_set_message(t("An error occurred while saving the survey."));
@@ -137,6 +139,13 @@ function survey_page_form($form, $form_state, $survey = null, $page = null){
 		"#default_value"=>isset($page) ? $page->title : ""
 	);
 	
+	$form["weight"] = array(
+		"#type"=>"textfield",
+		"#title"=>t("Weight"),
+		"#required"=>true,
+		"#default_value"=>isset($page) ? $page->weight : 0
+	);
+	
 	$form["actions"]["cancel"] = array(
 		"#type"=>"submit",
 		"#name"=>"btn-cancel",
@@ -159,6 +168,35 @@ function survey_page_form_validate($form, &$form_state){
 
 function survey_page_form_submit($form, &$form_state){
 
+	$survey = $form_state["values"]["survey"];
+	switch($form_state["triggering_element"]["#name"]){
+		case "btn-save":{
+			
+			try {
+				$survey_id = $survey->id;
+				$title = $form_state["values"]["title"];
+				$weight = $form_state["values"]["weight"];
+				$page_id = survey_page_add($survey_id, $title, $weight);
+				drupal_set_message(t("Saved survey page"));
+				
+				$form_state["redirect"] = "survey/{$survey->id}/edit";
+			}catch(Exception $e){
+				watchdog_exception("survey", $e);
+				drupal_set_message(t("An error occured while trying to save the survey page."),"error");
+				
+				$form_state["redirect"] = "survey/{$survey->id}/page/add";
+			}
+			
+			break;
+		}
+		case "btn-cancel":{
+			
+			$form_state["redirect"] = "survey/{$survey->id}/edit";
+			
+			break;
+		}
+	}
+	
 }
 
 function survey_question_form($form, $form_state, $survey = null, $question = null){
@@ -256,11 +294,15 @@ function survey_question_form($form, $form_state, $survey = null, $question = nu
 		}
 	}
 	
-	$pages = array();
+	$options = array();
+	$pages = survey_page_get_all($survey->id);
+	foreach($pages as $page){
+		$options[$page["id"]] = $page["title"];
+	}
 	$form["page"] = array(
 		"#type"=>"select",
 		"#title"=>t("Page"),
-		"#options"=>$pages,
+		"#options"=>$options,
 		"#required"=>true
 	);
 	$form["link-page-add"] = array(

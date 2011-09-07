@@ -37,11 +37,34 @@ class SurveyDb {
 	
 	public static function survey_add($title, $desc){
 		
-		db_insert("surveys")
+		return db_insert("surveys")
 			->fields(array(
 				"title"=>$title,
 				"description"=>$desc,
 				"created"=>REQUEST_TIME
+			))
+			->execute();
+		
+	}
+	
+	public static function survey_page_get_all($survey_id){
+		
+		$qry = db_select("survey_pages","a")
+			->fields("a")
+			->condition("a.survey_id", $survey_id, "=")
+			->execute();
+		$results = $qry->fetchAll(PDO::FETCH_ASSOC);
+		return $results;
+		
+	}
+	
+	public static function survey_page_add($survey_id, $title, $weight){
+		
+		return db_insert("survey_pages")
+			->fields(array(
+				"survey_id"=>$survey_id,
+				"title"=>$title,
+				"weight"=>$weight
 			))
 			->execute();
 		
