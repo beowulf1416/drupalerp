@@ -70,7 +70,11 @@ class SurveyDb {
 	
 	public static function get_pages($survey_id){
 		
-		
+		$qry = db_select("survey_pages","a")
+			->fields("a")
+			->execute();
+		$results = $qry->fetchAll(PDO::FETCH_ASSOC);
+		return $results;
 		
 	}
 	

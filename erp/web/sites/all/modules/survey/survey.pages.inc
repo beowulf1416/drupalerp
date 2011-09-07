@@ -51,14 +51,7 @@ function survey_edit_form($form, $form_state, $survey = null){
 		"#default_value"=>$survey == null ? "" : $survey->description
 	);
 	
-	$form["use-pages"] = array(
-		"#type"=>"checkbox",
-		"#title"=>t("Use pages (wizard)"),
-		"#required"=>true,
-		"#default_value"=>true
-	);
-	
-	if($survey == null && isset($form_state["values"]["user-pages"])){
+	if($survey != null){
 		$form["link-survey-pages-add"] = array(
 			"#markup"=>l("Add survey page","survey/{$survey->id}/page/add")
 		);
@@ -126,6 +119,37 @@ function survey_edit_form_submit($form, &$form_state){
 }
 
 function survey_page_form($form, $form_state, $survey = null, $page = null){
+	
+	$form["survey"] = array(
+		"#type"=>"value",
+		"#value"=>$survey
+	);
+	
+	$form["page"] = array(
+		"#type"=>"value",
+		"#value"=>$page
+	);
+	
+	$form["title"] = array(
+		"#type"=>"textfield",
+		"#title"=>t("Title"),
+		"#required"=>true,
+		"#default_value"=>isset($page) ? $page->title : ""
+	);
+	
+	$form["actions"]["cancel"] = array(
+		"#type"=>"submit",
+		"#name"=>"btn-cancel",
+		"#value"=>t("Cancel")
+	);
+	
+	$form["actions"]["save"] = array(
+		"#type"=>"submit",
+		"#name"=>"btn-save",
+		"#value"=>t("Save")
+	);
+	
+	return $form;
 	
 }
 
@@ -198,6 +222,19 @@ function survey_question_form($form, $form_state, $survey = null, $question = nu
 			break;
 		}
 	}
+	
+	$pages = array();
+	$form["page"] = array(
+		"#type"=>"select",
+		"#title"=>t("Page"),
+		"#options"=>$pages,
+		"#required"=>true
+	);
+	$form["link-page-add"] = array(
+		"#markup"=>l("Add page","survey/{$survey->id}/page/add"),
+		"#prefix"=>"<div class=\"link-page-add-wrapper\">",
+		"#suffix"=>"</div><!-- .link-page-add-wrapper -->"
+	);
 	
 	$form["actions"]["cancel"] = array(
 		"#type"=>"submit",
