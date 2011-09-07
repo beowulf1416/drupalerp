@@ -87,6 +87,11 @@ function survey_schema(){
 					"type"=>"int",
 					"unsigned"=>true,
 					"not null"=>true
+				),
+				"name"=>array(
+					"type"=>"varchar",
+					"length"=>100,
+					"not null"=>true
 				)
 			)
 		),
@@ -270,7 +275,8 @@ function survey_schema(){
 }
 
 function survey_install(){
-	
+	// add question types
+	SurveyDb::post_install();
 }
 
 function survey_uninstall(){

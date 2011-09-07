@@ -157,13 +157,47 @@ function survey_question_form($form, $form_state, $survey = null, $question = nu
 	);
 
 	$types = array();
+	$results = SurveyDb::get_question_types();
+	foreach($results as $result){
+		$types[$result["id"]] = t($result["name"]);
+	}
 	$form["type"] = array(
 		"#type"=>"select",
 		"#title"=>t("Type"),
 		"#required"=>true,
 		"#options"=>$types,
-		"#default_value"=>0
+		"#default_value"=>0,
+		"#ajax"=>array(
+			"callback"=>"survey_question_form_type_callback",
+			"wrapper"=>"survey-type-ajax-result-wrapper"
+		)
 	);
+	
+	$type_id = isset($form_state["values"]["type"]) ? $form_state["values"]["type"] : QTYPE_TEXT;
+	$form["type-params"] = array(
+		"#type"=>"fieldset",
+		"#title"=>t("Parameters"),
+		"#prefix"=>"<div id=\"survey-type-ajax-result-wrapper\">",
+		"#suffix"=>"</div><!-- #survey-type-ajax-result-wrapper -->"
+	);
+	
+	switch($type_id){
+		case QTYPE_TEXT:{
+			break;
+		}
+		case QTYPE_YES_NO:{
+			break;
+		}
+		case QTYPE_TRUE_FALSE:{
+			break;
+		}
+		case QTYPE_SELECT_SINGLE:{
+			break;
+		}
+		case QTYPE_SELECT_MULTI:{
+			break;
+		}
+	}
 	
 	$form["actions"]["cancel"] = array(
 		"#type"=>"submit",
@@ -181,10 +215,64 @@ function survey_question_form($form, $form_state, $survey = null, $question = nu
 	
 }
 
+function survey_question_form_type_callback($form, $form_state){
+	
+	return $form["type-params"];
+	
+}
+
 function survey_question_form_validate($form, &$form_state){
 	
 }
 
 function survey_question_form_submit($form, &$form_state){
+
+}
+
+function survey_question_selection_form($form, $form_state, $survey = null, $question = null, $title = null, $value = null){
+
+	$form["survey"] = array(
+		"#type"=>"value",
+		"#value"=>$survey
+	);
+	
+	$form["question"] = array(
+		"#type"=>"value",
+		"#value"=>$question
+	);
+	
+	$form["title"] = array(
+		"#type"=>"textfield",
+		"#title"=>t("Title"),
+		"#required"=>true,
+		"#default_value"=>$title
+	);
+	
+	$form["value"] = array(
+		"#type"=>"textfield",
+		"#title"=>t("Value"),
+		"#required"=>true,
+		"#default_value"=>$value
+	);
+	
+	$form["actions"]["cancel"] = array(
+		"#type"=>"submit",
+		"#name"=>"btn-cancel",
+		"#value"=>t("Cancel")
+	);
+	
+	$form["actions"]["save"] = array(
+		"#type"=>"submit",
+		"#name"=>"btn-save",
+		"#value"=>t("Save")
+	);
+	
+}
+
+function survey_question_selection_form_validate($form, &$form_state){
+	
+}
+
+function survey_question_selection_form_submit($form, &$form_state){
 
 }

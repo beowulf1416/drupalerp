@@ -1,4 +1,11 @@
 <?php
+
+define("QTYPE_TEXT",1);
+define("QTYPE_YES_NO",2);
+define("QTYPE_TRUE_FALSE",3);
+define("QTYPE_SELECT_SINGLE",4);
+define("QTYPE_SELECT_MULTI",5);
+
 function survey_permissions(){
 	return array(
 		"administer survey"=>array(
