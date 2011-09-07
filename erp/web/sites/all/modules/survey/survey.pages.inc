@@ -179,6 +179,13 @@ function survey_question_form($form, $form_state, $survey = null, $question = nu
 		"#required"=>true,
 		"#default_value"=>""
 	);
+	
+	$form["text"] = array(
+		"#type"=>"textarea",
+		"#title"=>t("Text"),
+		"#required"=>true,
+		"#default_value"=>""
+	);
 
 	$types = array();
 	$results = SurveyDb::get_question_types();
@@ -198,27 +205,53 @@ function survey_question_form($form, $form_state, $survey = null, $question = nu
 	);
 	
 	$type_id = isset($form_state["values"]["type"]) ? $form_state["values"]["type"] : QTYPE_TEXT;
-	$form["type-params"] = array(
-		"#type"=>"fieldset",
-		"#title"=>t("Parameters"),
-		"#prefix"=>"<div id=\"survey-type-ajax-result-wrapper\">",
-		"#suffix"=>"</div><!-- #survey-type-ajax-result-wrapper -->"
-	);
-	
 	switch($type_id){
 		case QTYPE_TEXT:{
+			$form["example-type-text"] = array(
+				"#markup"=>isset($form_state["values"]["text"]) ? "<p>".$form_state["values"]["text"]."</p>" : "<p>Why is the sky blue?</p>",
+				"#prefix"=>"<div class=\"question-example\>",
+				"#suffix"=>"</div><!-- .question-example -->"
+			);
 			break;
 		}
 		case QTYPE_YES_NO:{
+			$form["example-type-yes-no"] = array(
+				"#markup"=>isset($form_state["values"]["text"]) ? "<p>".$form_state["values"]["text"]."</p>" : "<p>Why is the sky blue?</p>",
+				"#prefix"=>"<div class=\"question-example\>",
+				"#suffix"=>"</div><!-- .question-example -->"
+			);
 			break;
 		}
 		case QTYPE_TRUE_FALSE:{
+			$form["example-type-true-false"] = array(
+				"#markup"=>isset($form_state["values"]["text"]) ? "<p>".$form_state["values"]["text"]."</p>" : "<p>Why is the sky blue?</p>",
+				"#prefix"=>"<div class=\"question-example\>",
+				"#suffix"=>"</div><!-- .question-example -->"
+			);
 			break;
 		}
 		case QTYPE_SELECT_SINGLE:{
+			$form["example-type-yes-no"] = array(
+				"#markup"=>isset($form_state["values"]["text"]) ? "<p>".$form_state["values"]["text"]."</p>" : "<p>Why is the sky blue?</p>",
+				"#prefix"=>"<div class=\"question-example\>",
+				"#suffix"=>"</div><!-- .question-example -->"
+			);
 			break;
 		}
 		case QTYPE_SELECT_MULTI:{
+			$form["example-type-yes-no"] = array(
+				"#markup"=>isset($form_state["values"]["text"]) ? "<p>".$form_state["values"]["text"]."</p>" : "<p>Why is the sky blue?</p>",
+				"#prefix"=>"<div class=\"question-example\>",
+				"#suffix"=>"</div><!-- .question-example -->"
+			);
+			break;
+		}
+		default:{
+			$form["example-type-text"] = array(
+				"#markup"=>isset($form_state["values"]["text"]) ? "<p>".$form_state["values"]["text"]."</p>" : "<p>Why is the sky blue?</p>",
+				"#prefix"=>"<div class=\"question-example\>",
+				"#suffix"=>"</div><!-- .question-example -->"
+			);
 			break;
 		}
 	}
