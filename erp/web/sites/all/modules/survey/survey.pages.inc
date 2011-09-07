@@ -1,8 +1,10 @@
 <?php
 function survey_list(){
 	
-	$surveys = SurveyDb::get_all_surveys();
-	return theme("survey_list",$surveys);
+	$surveys = SurveyDb::survey_get_all();
+	return theme("survey_list",array(
+		"surveys"=>$surveys
+	));
 	
 }
 
@@ -40,13 +42,13 @@ function survey_edit_form($form, $form_state, $survey = null){
 		"#type"=>"textfield",
 		"#title"=>t("Title"),
 		"#required"=>true,
-		"#default_value"=>""
+		"#default_value"=>$survey == null ? "" : $survey->title
 	);
 	
 	$form["desc"] = array(
 		"#type"=>"textarea",
 		"#title"=>t("Description"),
-		"#default_value"=>""
+		"#default_value"=>$survey == null ? "" : $survey->description
 	);
 	
 	$form["use-pages"] = array(
@@ -70,15 +72,11 @@ function survey_edit_form($form, $form_state, $survey = null){
 			"text"=>t("Text"),
 			"type"=>t("Type")
 		),
-		"#options"=>$options
+		"#options"=>$options,
+		"#empty"=>$survey == null ? t("No questions") : l("Add question","survey/{$survey->id}/question/add")
 	);
-	if($survey == null){
-		$form["link-survey-questions-add"] = array(
-			"#markup"=>l("Add question","survey/{$survey->id}/question/add")
-		);
-	}
 	
-	if($survey == null){
+	if($survey != null){
 		$form["closed"] = array(
 			"#type"=>"checkbox",
 			"#title"=>t("This survey is closed"),
@@ -163,7 +161,7 @@ function survey_question_form($form, $form_state, $survey = null, $question = nu
 		"#type"=>"select",
 		"#title"=>t("Type"),
 		"#required"=>true,
-		"#options"=>$options,
+		"#options"=>$types,
 		"#default_value"=>0
 	);
 	

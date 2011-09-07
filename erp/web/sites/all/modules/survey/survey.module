@@ -52,7 +52,7 @@ function survey_menu(){
 		),
 		"survey/%survey/edit"=>array(
 			"title"=>"Edit",
-			"page arguments"=>"drupal_get_form",
+			"page callback"=>"drupal_get_form",
 			"page arguments"=>array("survey_edit_form",1),
 			"access arguments"=>"create survey",
 			"file"=>"survey.pages.inc",
@@ -136,21 +136,33 @@ function survey_menu(){
 
 function survey_load($survey_id, $reset=false){
 	
-}
-
-function survey_load_multiple(){
+	$surveys = survey_load_multiple(array($survey_id), $reset);
+	return reset($surveys);
 	
 }
 
-function survey_callback_title($survey, $reset=false){
+function survey_load_multiple($survey_ids = array(), $conditions = array(), $reset = false){
+	
+	return entity_load("survey", $survey_ids, $conditions, $reset);
+	
+}
+
+function survey_callback_title($survey){
+	
+	
 	
 }
 
 function survey_question_load($question_id, $reset=false){
 	
+	$questions = survey_question_load_multiple(array($question_id), $reset);
+	return reset($questions);
+	
 }
 
-function survey_question_load_multiple(){
+function survey_question_load_multiple($question_ids = array(), $conditions = array(), $reset = false){
+	
+	return entity_load($question_ids, $conditions, $reset);
 	
 }
 
@@ -162,6 +174,86 @@ function survey_theme($existing, $type, $theme, $path){
 				"surveys"=>null
 			),
 			"template"=>"templates/survey-list"
+		)
+	);
+	
+}
+
+function survey_entity_info(){
+	
+	return array(
+		"survey"=>array(
+			"label"=>"Survey",
+			"controller class"=>"SurveyEntityController",
+			"base table"=>"surveys",
+			"load hook"=>"survey_load",
+			"fieldable"=>true,
+			"entity keys"=>array(
+				"id"=>"id"
+			),
+			"bundles"=>array(
+				"survey"=>array(
+					"label"=>t("Survey"),
+					"admin"=>array(
+						"path"=>"admin/config/survey",
+						"access arguments"=>array("administer survey")
+					)
+				)
+			)
+		),
+		"survey_question"=>array(
+			"label"=>"Survey Question",
+			"controller class"=>"SurveyQuestionEntityController",
+			"base table"=>"survey_questions",
+			"load hook"=>"survey_question_load",
+			"fieldable"=>true,
+			"entity_keys"=>array(
+				"id"=>"id"
+			),
+			"bundles"=>array(
+				"survey_question"=>array(
+					"label"=>t("Survey Questions"),
+					"admin"=>array(
+						"path"=>"admin/config/survey",
+						"access arguments"=>array("administer survey")
+					)
+				)
+			)
+		)
+	);
+	
+}
+
+function survey_field_extra_fields(){
+	
+	return array(
+		"survey"=>array(
+			"survey"=>array(
+				"form"=>array(
+					"title"=>array(
+						"name"=>t("Title"),
+						"description"=>t("Survey title"),
+						"weight"=>1
+					),
+					"description"=>array(
+						"name"=>t("Description"),
+						"description"=>t("Survey description"),
+						"weight"=>2
+					)
+				),
+				"display"=>array(
+					"title"=>array(
+						"name"=>t("Title"),
+						"description"=>t("Survey title"),
+						"weight"=>1
+					),
+					"description"=>array(
+						"name"=>t("Description"),
+						"description"=>t("Survey description"),
+						"weight"=>2
+					)
+				)
+			)
 		)
 	);
 	

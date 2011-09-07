@@ -5,6 +5,7 @@ version = 0.1
 core = 7.x
 
 files[] = survey_entity_controller.inc
+files[] = survey_question_entity_controller.inc
 files[] = survey_db.inc
 
 configure = admin/config/survey

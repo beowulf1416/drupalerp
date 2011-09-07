@@ -6,7 +6,8 @@ class SurveyDb {
 		$qry = db_select("surveys","a")
 			->fields("a")
 			->isNull("a.closed")
-			->execute();
+ 			->execute();
+		
 		$results = $qry->fetchAll(PDO::FETCH_ASSOC);
 		return $results;
 		
