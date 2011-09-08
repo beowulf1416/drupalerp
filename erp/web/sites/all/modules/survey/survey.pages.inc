@@ -27,84 +27,99 @@ function survey_form($form, $form_state, $survey = null){
 	);
 	
 	$pages = SurveyDb::get_pages($survey->id);
-	foreach($pages as $p){
-		
-		$page_id = $p["id"];
+	$max_step = count($pages);
+	$form["max-step"] = array(
+		"#type"=>"value",
+		"#value"=>$max_step
+	);
+	
+	for($i=0; $i<count($pages); $i++){
+		$page = $pages[$i];
+		$page_id = $page["id"];
 		
 		$form["pages"]["page-{$page_id}"] = array(
 			"#tree"=>true
 		);
 		
-		if(isset($p["description"])){
-			$form["pages"]["page-{$page_id}"]["desc"] = array(
-				"#markup"=>t($p["description"]),
-				"#prefix"=>"<div id=\"page-desc-{$page_id}\" class=\"page-desc\">",
-				"#suffix"=>"</div><!-- #page-desc-{$page_id} -->"
-			);
-		}
-		
 		$questions = SurveyDb::get_questions($survey->id, $page_id);
-		foreach($questions as $q){
-			$question_id = $q["id"];
-			$type_id = $q["type_id"];
-			switch($type_id){
-				case QTYPE_TEXT:{
-					$form["pages"]["page-{$page_id}"]["question-{$question_id}"] = array(
-						"#type"=>"textfield",
-						"#title"=>t($q["text"]),
-						"#description"=>isset($q["description"]) ? $q["description"] : "",
-						"#required"=>isset($q["is_required"]) ? $q["is_required"] != Q_NOT_REQ_VALUE : false
-					);
-					break;
-				}
-				case QTYPE_YES_NO:{
-					$form["pages"]["page-{$page_id}"]["question-{$question_id}"] = array(
-						"#type"=>"radios",
-						"#title"=>t($q["text"]),
-						"#description"=>isset($q["description"]) ? $q["description"] : "",
-						"#required"=>isset($q["is_required"]) ? $q["is_required"] != Q_NOT_REQ_VALUE : false,
-						"#options"=>array(0=>t("Yes"),1=>t("No"))
-					);
-					break;
-				}
-				case QTYPE_TRUE_FALSE:{
-					$form["pages"]["page-{$page_id}"]["question-{$question_id}"] = array(
-						"#type"=>"radios",
-						"#title"=>t($q["text"]),
-						"#description"=>isset($q["description"]) ? $q["description"] : "",
-						"#required"=>isset($q["is_required"]) ? $q["is_required"] != Q_NOT_REQ_VALUE : false,
-						"#options"=>array(0=>t("True"),1=>t("False"))
-					);
-					break;
-				}
-				// TODO QTYPE_SELECT
-				default:{
-					$form["pages"]["page-{$page_id}"]["question-{$question_id}"] = array(
-						"#type"=>"textfield",
-						"#title"=>t($q["text"]),
-						"#description"=>isset($q["description"]) ? $q["description"] : "",
-						"#required"=>isset($q["is_required"]) ? $q["is_required"] != Q_NOT_REQ_VALUE : false
-					);
-					break;
-				}
+		if($i == $step - 1){
+
+			if(isset($page["description"])){
+				$form["pages"]["page-{$page_id}"]["desc"] = array(
+					"#markup"=>t($page["description"]),
+					"#prefix"=>"<div id=\"page-desc-{$page_id}\">",
+					"#suffix"=>"</div><!-- #page-desc-{$page_id} -->"
+				);
 			}
-		}
+			
+			foreach($questions as $q){
+				$question_id = $q["id"];
+				$type_id = $q["type_id"];
+				$form["pages"]["page-{$page_id}"]["question-{$question_id}"] = 
+					_question_form_element($form_state, $page, $q);
+			} // foreach
+			
+		} else {
+			
+			foreach($questions as $q){
+				$question_id = $q["id"];
+				$type_id = $q["type_id"];
+				$form["pages"]["page-{$page_id}"]["question-{$question_id}"] = array(
+					"#type"=>"value",
+					"#value"=>isset($form_state["values"]["pages"]["page-{$page_id}"]["question-{$question_id}"]) ?
+						$form_state["values"]["pages"]["page-{$page_id}"]["question-{$question_id}"] : null
+				);
+			} // foreach
+			
+		} // if
 		
-		$form["pages"]["page-{$page_id}"]["prev"] = array(
+	} // for
+	
+	if($step != 1){
+		$form["actions"]["prev"] = array(
 			"#type"=>"submit",
 			"#name"=>"btn-previous",
 			"#value"=>t("Previous")
 		);
-		
-		$form["pages"]["page-{$page_id}"]["next"] = array(
+	}
+
+	if($step != $max_step){
+		$form["actions"]["next"] = array(
 			"#type"=>"submit",
 			"#name"=>"btn-next",
 			"#value"=>t("Next")
 		);
-		
 	}
 	
+	if($step == $max_step){
+		$form["actions"]["finish"] = array(
+			"#type"=>"submit",
+			"#name"=>"btn-finish",
+			"#value"=>t("Finish")
+		);
+	}
+		
 	return $form;
+	
+}
+
+function _question_form_element(&$form_state, $page, $question){
+	
+	$question_id = $question["id"];
+	$type_id = $question["type_id"];
+	switch($type_id){
+		default:{
+			return array(
+				"#type"=>"textfield",
+				"#title"=>t($question["text"]),
+				"#description"=>isset($question["description"]) ?
+					$question["description"] : "",
+				"#required"=>$question["is_required"] != Q_NOT_REQ_VALUE,
+				"#default_value"=>isset($form_state["values"]["pages"]["page-{$page["id"]}"]["question={$question_id}"]) ?
+					$form_state["values"]["pages"]["page-{$page["id"]}"]["question={$question_id}"] : ""
+			);
+		}
+	}
 	
 }
 
@@ -114,7 +129,32 @@ function survey_form_validate($form, &$form_state){
 
 function survey_form_submit($form, &$form_state){
 
-	$form_state["rebuild"] = true;
+	$step = isset($form_state["values"]["step"]) ? $form_state["values"]["step"] : 1;
+	$max_step = isset($form_state["values"]["max-step"]) ? $form_state["values"]["max-step"] : 2;
+	switch($form_state["triggering_element"]["#name"]){
+		case "btn-next":{
+			$step += 1;
+			$form_state["values"]["step"] = $step;
+			$form_state["rebuild"] = true;
+			break;
+		}
+		case "btn-previous":{
+			$step -= 1;
+			$form_state["values"]["step"] = $step;
+			$form_state["rebuild"] = true;
+			break;
+		}
+		case "btn-finish":{
+			_save_survey_response($form_state);
+			break;
+		}
+	} // switch
+	
+}
+
+function _save_survey_response(&$form_state){
+	
+	// TODO _save_survey_response
 	
 }
 
