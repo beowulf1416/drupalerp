@@ -52,19 +52,44 @@ class SurveyDb {
 		$qry = db_select("survey_pages","a")
 			->fields("a")
 			->condition("a.survey_id", $survey_id, "=")
+			->orderBy("a.weight")
 			->execute();
 		$results = $qry->fetchAll(PDO::FETCH_ASSOC);
-		return $results;
+		
+		$return = array();
+		foreach($results as $r){
+			$return[$r["id"]] = $r;
+		}
+		
+		return $return;
 		
 	}
 	
-	public static function survey_page_add($survey_id, $title, $weight){
+	public static function survey_page_add($survey_id, $title, $description, $weight){
 		
 		return db_insert("survey_pages")
 			->fields(array(
 				"survey_id"=>$survey_id,
 				"title"=>$title,
+				"description"=>$description,
 				"weight"=>$weight
+			))
+			->execute();
+		
+	}
+	
+	public static function survey_question_add($survey_id, $name, $text, $description, $type_id, $page_id, $weight, $required){
+		
+		return db_insert("survey_questions")
+			->fields(array(
+				"survey_id"=>$survey_id,
+				"page_id"=>$page_id,
+				"type_id"=>$type_id,
+				"weight"=>$weight,
+				"name"=>$name,
+				"text"=>$text,
+				"description"=>$description,
+				"is_required"=>$required
 			))
 			->execute();
 		
@@ -76,17 +101,32 @@ class SurveyDb {
 			->fields("a")
 			->execute();
 		$results = $qry->fetchAll(PDO::FETCH_ASSOC);
-		return $results;
+		
+		$return = array();
+		foreach($results as $r){
+			$return[$r["id"]] = $r;
+		}
+		
+		return $return;
 		
 	}
 	
-	public static function get_questions($survey_id){
+	public static function get_questions($survey_id, $page_id = null){
 		
-		$results = db_select("survey_questions","a")
+		$qry = db_select("survey_questions","a")
 			->fields("a")
-			->condition("survey_id", $survey_id, "=")
-			->execute()
+			->condition("a.survey_id", $survey_id, "=")
+			->orderBy("a.weight");
+		
+		if(isset($page_id)){
+			$qry->condition("a.page_id", $page_id, "=")
+				->orderBy("a.page_id");
+		}
+		
+		
+		$results = $qry->execute()
 			->fetchAll(PDO::FETCH_ASSOC);
+		
 		return $results;
 		
 	}
@@ -95,6 +135,8 @@ class SurveyDb {
 		
 		$qry = db_select("survey_pages","a")
 			->fields("a")
+			->condition("a.survey_id", $survey_id, "=")
+			->orderBy("a.weight")
 			->execute();
 		$results = $qry->fetchAll(PDO::FETCH_ASSOC);
 		return $results;

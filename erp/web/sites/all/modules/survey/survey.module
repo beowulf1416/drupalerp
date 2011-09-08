@@ -6,6 +6,8 @@ define("QTYPE_TRUE_FALSE",3);
 define("QTYPE_SELECT_SINGLE",4);
 define("QTYPE_SELECT_MULTI",5);
 
+define("Q_NOT_REQ_VALUE",0);	// indicates that a question is required
+
 function survey_permissions(){
 	return array(
 		"administer survey"=>array(
@@ -142,35 +144,25 @@ function survey_menu(){
 }
 
 function survey_load($survey_id, $reset=false){
-	
 	$surveys = survey_load_multiple(array($survey_id), $reset);
 	return reset($surveys);
-	
 }
 
 function survey_load_multiple($survey_ids = array(), $conditions = array(), $reset = false){
-	
 	return entity_load("survey", $survey_ids, $conditions, $reset);
-	
 }
 
 function survey_callback_title($survey){
-	
-	
-	
+	// TODO survey_callback_title
 }
 
 function survey_question_load($question_id, $reset=false){
-	
 	$questions = survey_question_load_multiple(array($question_id), $reset);
 	return reset($questions);
-	
 }
 
 function survey_question_load_multiple($question_ids = array(), $conditions = array(), $reset = false){
-	
-	return entity_load($question_ids, $conditions, $reset);
-	
+	return entity_load("survey_question", $question_ids, $conditions, $reset);
 }
 
 function survey_theme($existing, $type, $theme, $path){
@@ -266,28 +258,30 @@ function survey_field_extra_fields(){
 	
 }
 
+function survey_types_get_all(){
+	return SurveyDb::get_question_types();
+}
+
 function survey_get_all(){
 	
 }
 
 function survey_add($title, $desc){
-	
 	return SurveyDb::survey_add($title, $desc);
-	
 }
 
 function survey_page_get_all($survey_id){
-	
 	return SurveyDb::survey_page_get_all($survey_id);
-	
 }
 
-function survey_page_add($survey_id, $title, $weight){
-	
-	return SurveyDb::survey_page_add($survey_id, $title, $weight);
-	
+function survey_page_add($survey_id, $title, $description, $weight){
+	return SurveyDb::survey_page_add($survey_id, $title, $description, $weight);
 }
 
-function survey_get_questions($survey_id){
-	
+function survey_questions_get_all($survey_id){
+	return SurveyDb::get_questions($survey_id);
+}
+
+function survey_question_add($survey_id, $name, $text, $description, $type_id, $page_id, $weight, $is_required){
+	return SurveyDb::survey_question_add($survey_id, $name, $text, $description, $type_id, $page_id, $weight, $is_required);
 }

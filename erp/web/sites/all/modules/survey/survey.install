@@ -26,6 +26,11 @@ function survey_schema(){
 					"unsigned"=>true,
 					"not null"=>true
 				),
+				"opened"=>array(
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>false
+				),
 				"closed"=>array(
 					"type"=>"int",
 					"unsigned"=>true,
@@ -56,6 +61,11 @@ function survey_schema(){
 					"type"=>"varchar",
 					"length"=>100,
 					"not null"=>true
+				),
+				"description"=>array(
+					"type"=>"varchar",
+					"length"=>500,
+					"not null"=>false
 				),
 				"weight"=>array(
 					"description"=>"survey page weight",
@@ -117,6 +127,12 @@ function survey_schema(){
 					"not null"=>true,
 					"default"=>0
 				),
+				"type_id"=>array(
+					"description"=>"fk, survey_question_types.id",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				),
 				"weight"=>array(
 					"description"=>"the order that this question appears in, larger values last",
 					"type"=>"int",
@@ -130,16 +146,22 @@ function survey_schema(){
 					"length"=>100,
 					"not null"=>true
 				),
-				"type_id"=>array(
-					"description"=>"fk, survey_question_types.id",
-					"type"=>"int",
-					"unsigned"=>true,
-					"not null"=>true
-				),
 				"text"=>array(
 					"description"=>"question text",
 					"type"=>"text",
 					"not null"=>true
+				),
+				"description"=>array(
+					"type"=>"varchar",
+					"length"=>500,
+					"not null"=>false
+				),
+				"is_required"=>array(
+					"description"=>"0 if not required, otherwise required",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true,
+					"default"=>0
 				)
 			),
 			"primary key"=>array(
