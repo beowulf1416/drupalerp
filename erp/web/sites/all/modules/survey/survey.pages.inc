@@ -57,10 +57,26 @@ function survey_edit_form($form, $form_state, $survey = null){
 		);
 	}
 	
+	$form["questions"] = array(
+		"#tree"=>true
+	);
+	
 	$options = array();
+	$types = survey_types_get_all();
+	$pages = survey_page_get_all($survey->id);
+	$questions = survey_questions_get_all($survey->id);
+	foreach($questions as $q){
+		$options[$q["id"]] = array(
+			"weight"=>$q["weight"],
+			"page_id"=>$pages[$q["page_id"]]["title"],
+			"text"=>$q["text"],
+			"type"=>$types[$q["type_id"]]["name"]
+		);
+	}
 	$form["questions"] = array(
 		"#type"=>"tableselect",
 		"#header"=>array(
+			"weight"=>t("Weight"),
 			"page_id"=>t("Page"),
 			"text"=>t("Text"),
 			"type"=>t("Type")
@@ -311,6 +327,13 @@ function survey_question_form($form, $form_state, $survey = null, $question = nu
 		"#suffix"=>"</div><!-- .link-page-add-wrapper -->"
 	);
 	
+	$form["weight"] = array(
+		"#type"=>"textfield",
+		"#title"=>t("Weight"),
+		"#required"=>false,
+		"#default_value"=>isset($question) ? $question->weight : 0
+	);
+	
 	$form["actions"]["cancel"] = array(
 		"#type"=>"submit",
 		"#name"=>"btn-cancel",
@@ -329,7 +352,7 @@ function survey_question_form($form, $form_state, $survey = null, $question = nu
 
 function survey_question_form_type_callback($form, $form_state){
 	
-	return $form["type-params"];
+	// TODO
 	
 }
 
@@ -339,6 +362,44 @@ function survey_question_form_validate($form, &$form_state){
 
 function survey_question_form_submit($form, &$form_state){
 
+	switch($form_state["triggering_element"]["#name"]){
+		case "btn-save":{
+			
+			$survey = $form_state["values"]["survey"];
+			$question = isset($form_state["values"]["question"]) ? $form_state["values"]["question"] : null;
+			
+			try {
+				$name = isset($form_state["values"]["name"]) ? $form_state["values"]["name"] : "";
+				$text = isset($form_state["values"]["text"]) ? $form_state["values"]["text"] : "";
+				$type_id = isset($form_state["values"]["type"]) ? $form_state["values"]["type"] : QTYPE_TEXT;
+				$page_id = isset($form_state["values"]["page"]) ? $form_state["values"]["page"] : 0;
+				$weight = isset($form_state["values"]["weight"]) ? $form_state["values"]["weight"] : 0;
+				if(isset($question) && is_object($question) && isset($question->id)){
+					
+				} else {
+					$question_id = survey_question_add($survey->id, $name, $text, $type_id, $page_id, $weight);
+				}
+				drupal_set_message(t("Saved survey question"));
+				$form_state["redirect"] = "survey/{$survey->id}/edit";
+			}catch(Exception $e){
+				watchdog_exception("survey", $e);
+				drupal_set_message(t("An error occured while trying to save the survey question."),"error");
+				
+				if(isset($question) && is_object($question) && isset($question->id)){
+					$form_state["redirect"] = "survey/{$survey->id}/question/{$question->id}/edit";
+				} else {
+					$form_state["redirect"] = "survey/{$survey->id}/question/add";
+				}
+			}
+			
+			break;
+		}
+		case "btn-cancel":{
+			$form_state["redirect"] = "survey/{$survey->id}/edit";
+			break;
+		}
+	}
+	
 }
 
 function survey_question_selection_form($form, $form_state, $survey = null, $question = null, $title = null, $value = null){

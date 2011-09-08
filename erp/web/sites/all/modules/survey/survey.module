@@ -266,6 +266,12 @@ function survey_field_extra_fields(){
 	
 }
 
+function survey_types_get_all(){
+	
+	return SurveyDb::get_question_types();
+	
+}
+
 function survey_get_all(){
 	
 }
@@ -288,6 +294,14 @@ function survey_page_add($survey_id, $title, $weight){
 	
 }
 
-function survey_get_questions($survey_id){
+function survey_questions_get_all($survey_id){
+	
+	return SurveyDb::get_questions($survey_id);
+	
+}
+
+function survey_question_add($survey_id, $name, $text, $type_id, $page_id, $weight){
+	
+	return SurveyDb::survey_question_add($survey_id, $name, $text, $type_id, $page_id, $weight);
 	
 }

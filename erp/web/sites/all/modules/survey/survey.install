@@ -117,6 +117,12 @@ function survey_schema(){
 					"not null"=>true,
 					"default"=>0
 				),
+				"type_id"=>array(
+					"description"=>"fk, survey_question_types.id",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true
+				),
 				"weight"=>array(
 					"description"=>"the order that this question appears in, larger values last",
 					"type"=>"int",
@@ -128,12 +134,6 @@ function survey_schema(){
 					"description"=>"question identifier",
 					"type"=>"varchar",
 					"length"=>100,
-					"not null"=>true
-				),
-				"type_id"=>array(
-					"description"=>"fk, survey_question_types.id",
-					"type"=>"int",
-					"unsigned"=>true,
 					"not null"=>true
 				),
 				"text"=>array(

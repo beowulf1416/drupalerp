@@ -54,7 +54,13 @@ class SurveyDb {
 			->condition("a.survey_id", $survey_id, "=")
 			->execute();
 		$results = $qry->fetchAll(PDO::FETCH_ASSOC);
-		return $results;
+		
+		$return = array();
+		foreach($results as $r){
+			$return[$r["id"]] = $r;
+		}
+		
+		return $return;
 		
 	}
 	
@@ -70,13 +76,34 @@ class SurveyDb {
 		
 	}
 	
+	public static function survey_question_add($survey_id, $name, $text, $type_id, $page_id, $weight){
+		
+		return db_insert("survey_questions")
+			->fields(array(
+				"survey_id"=>$survey_id,
+				"page_id"=>$page_id,
+				"type_id"=>$type_id,
+				"weight"=>$weight,
+				"name"=>$name,
+				"text"=>$text
+			))
+			->execute();
+		
+	}
+	
 	public static function get_question_types(){
 		
 		$qry = db_select("survey_question_types","a")
 			->fields("a")
 			->execute();
 		$results = $qry->fetchAll(PDO::FETCH_ASSOC);
-		return $results;
+		
+		$return = array();
+		foreach($results as $r){
+			$return[$r["id"]] = $r;
+		}
+		
+		return $return;
 		
 	}
 	
