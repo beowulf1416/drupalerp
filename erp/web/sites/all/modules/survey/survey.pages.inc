@@ -12,7 +12,14 @@ function survey_form($form, $form_state, $survey = null){
 
 	$form["survey"] = array(
 		"#type"=>"value",
-		"#value"=>$survey
+		"#value"=>isset($form_state["values"]["survey"]) ?
+			$form_state["values"]["survey"] : $survey
+	);
+	
+	$step = isset($form_state["values"]["step"]) ? $form_state["values"]["step"] : 1;
+	$form["step"] = array(
+		"#type"=>"value",
+		"#value"=>$step
 	);
 	
 	$form["pages"] = array(
@@ -107,6 +114,8 @@ function survey_form_validate($form, &$form_state){
 
 function survey_form_submit($form, &$form_state){
 
+	$form_state["rebuild"] = true;
+	
 }
 
 function survey_edit_form($form, $form_state, $survey = null){
@@ -343,6 +352,13 @@ function survey_question_form($form, $form_state, $survey = null, $question = nu
 		"#required"=>false,
 		"#default_value"=>isset($question) ? $question->description : ""
 	);
+	
+	$form["required"] = array(
+		"#type"=>"checkbox",
+		"#title"=>t("Required"),
+		"#required"=>false,
+		"#default_value"=>isset($question) ? $question->is_required : false
+	);
 
 	$types = array();
 	$results = SurveyDb::get_question_types();
@@ -475,13 +491,15 @@ function survey_question_form_submit($form, &$form_state){
 			try {
 				$name = isset($form_state["values"]["name"]) ? $form_state["values"]["name"] : "";
 				$text = isset($form_state["values"]["text"]) ? $form_state["values"]["text"] : "";
+				$desc = isset($form_state['values']["desc"]) ? $form_state["values"]["desc"] : "";
 				$type_id = isset($form_state["values"]["type"]) ? $form_state["values"]["type"] : QTYPE_TEXT;
 				$page_id = isset($form_state["values"]["page"]) ? $form_state["values"]["page"] : 0;
 				$weight = isset($form_state["values"]["weight"]) ? $form_state["values"]["weight"] : 0;
+				$is_required = isset($form_state["values"]["required"]) ? $form_state["values"]["required"] : false;
 				if(isset($question) && is_object($question) && isset($question->id)){
 					
 				} else {
-					$question_id = survey_question_add($survey->id, $name, $text, $type_id, $page_id, $weight);
+					$question_id = survey_question_add($survey->id, $name, $text, $desc, $type_id, $page_id, $weight, $is_required);
 				}
 				drupal_set_message(t("Saved survey question"));
 				$form_state["redirect"] = "survey/{$survey->id}/edit";

@@ -206,7 +206,7 @@ function survey_entity_info(){
 			"base table"=>"survey_questions",
 			"load hook"=>"survey_question_load",
 			"fieldable"=>true,
-			"entity_keys"=>array(
+			"entity keys"=>array(
 				"id"=>"id"
 			),
 			"bundles"=>array(
