@@ -61,7 +61,7 @@ function survey_menu(){
 			"title"=>"Edit",
 			"page callback"=>"drupal_get_form",
 			"page arguments"=>array("survey_edit_form",1),
-			"access arguments"=>"create survey",
+			"access arguments"=>array("create survey"),
 			"file"=>"survey.pages.inc",
 			"type"=>MENU_LOCAL_TASK
 		),
