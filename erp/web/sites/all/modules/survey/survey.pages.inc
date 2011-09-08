@@ -141,13 +141,13 @@ function survey_edit_form($form, $form_state, $survey = null){
 	
 	$options = array();
 	$types = survey_types_get_all();
-	$pages = survey_page_get_all($survey->id);
-	$questions = survey_questions_get_all($survey->id);
+	$pages = isset($survey) ? survey_page_get_all($survey->id) : array();
+	$questions = isset($survey) ? survey_questions_get_all($survey->id) : array();
 	foreach($questions as $q){
 		$options[$q["id"]] = array(
 			"weight"=>$q["weight"],
 			"page_id"=>$pages[$q["page_id"]]["title"],
-			"name"=>l($q["name"],"survey/{$survey->id}/question/{$q["id"]}/edit"),
+			"name"=>isset($survey) ? l($q["name"],"survey/{$survey->id}/question/{$q["id"]}/edit") : $q["name"],
 			"text"=>$q["text"],
 			"type"=>$types[$q["type_id"]]["name"]
 		);
@@ -243,6 +243,13 @@ function survey_page_form($form, $form_state, $survey = null, $page = null){
 		"#default_value"=>isset($page) ? $page->title : ""
 	);
 	
+	$form["desc"] = array(
+		"#type"=>"textarea",
+		"#title"=>t("Description"),
+		"#required"=>false,
+		"#default_value"=>isset($page) ? $page->description : ""
+	);
+	
 	$form["weight"] = array(
 		"#type"=>"textfield",
 		"#title"=>t("Weight"),
@@ -279,8 +286,9 @@ function survey_page_form_submit($form, &$form_state){
 			try {
 				$survey_id = $survey->id;
 				$title = $form_state["values"]["title"];
+				$desc = $form_state["values"]["desc"];
 				$weight = $form_state["values"]["weight"];
-				$page_id = survey_page_add($survey_id, $title, $weight);
+				$page_id = survey_page_add($survey_id, $title, $desc, $weight);
 				drupal_set_message(t("Saved survey page"));
 				
 				$form_state["redirect"] = "survey/{$survey->id}/edit";
@@ -319,14 +327,21 @@ function survey_question_form($form, $form_state, $survey = null, $question = nu
 		"#type"=>"textfield",
 		"#title"=>t("Name"),
 		"#required"=>true,
-		"#default_value"=>""
+		"#default_value"=>isset($question) ? $question->name : ""
 	);
 	
 	$form["text"] = array(
 		"#type"=>"textarea",
 		"#title"=>t("Text"),
 		"#required"=>true,
-		"#default_value"=>""
+		"#default_value"=>isset($question) ? $question->text : ""
+	);
+	
+	$form["desc"] = array(
+		"#type"=>"textarea",
+		"#title"=>t("Description"),
+		"#required"=>false,
+		"#default_value"=>isset($question) ? $question->description : ""
 	);
 
 	$types = array();
@@ -339,7 +354,7 @@ function survey_question_form($form, $form_state, $survey = null, $question = nu
 		"#title"=>t("Type"),
 		"#required"=>true,
 		"#options"=>$types,
-		"#default_value"=>0,
+		"#default_value"=>isset($question) ? $question->type_id : QTYPE_TEXT,
 		"#ajax"=>array(
 			"callback"=>"survey_question_form_type_callback",
 			"wrapper"=>"survey-type-ajax-result-wrapper"
@@ -407,7 +422,8 @@ function survey_question_form($form, $form_state, $survey = null, $question = nu
 		"#type"=>"select",
 		"#title"=>t("Page"),
 		"#options"=>$options,
-		"#required"=>true
+		"#required"=>true,
+		"#default_value"=>isset($question) ? $question->page_id : 0
 	);
 	$form["link-page-add"] = array(
 		"#markup"=>l("Add page","survey/{$survey->id}/page/add"),

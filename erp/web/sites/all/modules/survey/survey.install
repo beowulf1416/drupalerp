@@ -26,6 +26,11 @@ function survey_schema(){
 					"unsigned"=>true,
 					"not null"=>true
 				),
+				"opened"=>array(
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>false
+				),
 				"closed"=>array(
 					"type"=>"int",
 					"unsigned"=>true,

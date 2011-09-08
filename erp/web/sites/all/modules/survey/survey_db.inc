@@ -52,6 +52,7 @@ class SurveyDb {
 		$qry = db_select("survey_pages","a")
 			->fields("a")
 			->condition("a.survey_id", $survey_id, "=")
+			->orderBy("a.weight")
 			->execute();
 		$results = $qry->fetchAll(PDO::FETCH_ASSOC);
 		
@@ -114,10 +115,12 @@ class SurveyDb {
 		
 		$qry = db_select("survey_questions","a")
 			->fields("a")
-			->condition("a.survey_id", $survey_id, "=");
+			->condition("a.survey_id", $survey_id, "=")
+			->orderBy("a.weight");
 		
 		if(isset($page_id)){
-			$qry->condition("a.page_id", $page_id, "=");
+			$qry->condition("a.page_id", $page_id, "=")
+				->orderBy("a.page_id");
 		}
 		
 		
@@ -132,6 +135,8 @@ class SurveyDb {
 		
 		$qry = db_select("survey_pages","a")
 			->fields("a")
+			->condition("a.survey_id", $survey_id, "=")
+			->orderBy("a.weight")
 			->execute();
 		$results = $qry->fetchAll(PDO::FETCH_ASSOC);
 		return $results;
