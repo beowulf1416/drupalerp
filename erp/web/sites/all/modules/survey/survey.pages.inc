@@ -15,9 +15,87 @@ function survey_form($form, $form_state, $survey = null){
 		"#value"=>$survey
 	);
 	
-	$form["page"] = array(
+	$form["pages"] = array(
 		"#tree"=>true
 	);
+	
+	$pages = SurveyDb::get_pages($survey->id);
+	foreach($pages as $p){
+		
+		$page_id = $p["id"];
+		
+		$form["pages"]["page-{$page_id}"] = array(
+			"#tree"=>true
+		);
+		
+		if(isset($p["description"])){
+			$form["pages"]["page-{$page_id}"]["desc"] = array(
+				"#markup"=>t($p["description"]),
+				"#prefix"=>"<div id=\"page-desc-{$page_id}\" class=\"page-desc\">",
+				"#suffix"=>"</div><!-- #page-desc-{$page_id} -->"
+			);
+		}
+		
+		$questions = SurveyDb::get_questions($survey->id, $page_id);
+		foreach($questions as $q){
+			$question_id = $q["id"];
+			$type_id = $q["type_id"];
+			switch($type_id){
+				case QTYPE_TEXT:{
+					$form["pages"]["page-{$page_id}"]["question-{$question_id}"] = array(
+						"#type"=>"textfield",
+						"#title"=>t($q["text"]),
+						"#description"=>isset($q["description"]) ? $q["description"] : "",
+						"#required"=>isset($q["is_required"]) ? $q["is_required"] != Q_NOT_REQ_VALUE : false
+					);
+					break;
+				}
+				case QTYPE_YES_NO:{
+					$form["pages"]["page-{$page_id}"]["question-{$question_id}"] = array(
+						"#type"=>"radios",
+						"#title"=>t($q["text"]),
+						"#description"=>isset($q["description"]) ? $q["description"] : "",
+						"#required"=>isset($q["is_required"]) ? $q["is_required"] != Q_NOT_REQ_VALUE : false,
+						"#options"=>array(0=>t("Yes"),1=>t("No"))
+					);
+					break;
+				}
+				case QTYPE_TRUE_FALSE:{
+					$form["pages"]["page-{$page_id}"]["question-{$question_id}"] = array(
+						"#type"=>"radios",
+						"#title"=>t($q["text"]),
+						"#description"=>isset($q["description"]) ? $q["description"] : "",
+						"#required"=>isset($q["is_required"]) ? $q["is_required"] != Q_NOT_REQ_VALUE : false,
+						"#options"=>array(0=>t("True"),1=>t("False"))
+					);
+					break;
+				}
+				// TODO QTYPE_SELECT
+				default:{
+					$form["pages"]["page-{$page_id}"]["question-{$question_id}"] = array(
+						"#type"=>"textfield",
+						"#title"=>t($q["text"]),
+						"#description"=>isset($q["description"]) ? $q["description"] : "",
+						"#required"=>isset($q["is_required"]) ? $q["is_required"] != Q_NOT_REQ_VALUE : false
+					);
+					break;
+				}
+			}
+		}
+		
+		$form["pages"]["page-{$page_id}"]["prev"] = array(
+			"#type"=>"submit",
+			"#name"=>"btn-previous",
+			"#value"=>t("Previous")
+		);
+		
+		$form["pages"]["page-{$page_id}"]["next"] = array(
+			"#type"=>"submit",
+			"#name"=>"btn-next",
+			"#value"=>t("Next")
+		);
+		
+	}
 	
 	return $form;
 	
@@ -69,6 +147,7 @@ function survey_edit_form($form, $form_state, $survey = null){
 		$options[$q["id"]] = array(
 			"weight"=>$q["weight"],
 			"page_id"=>$pages[$q["page_id"]]["title"],
+			"name"=>l($q["name"],"survey/{$survey->id}/question/{$q["id"]}/edit"),
 			"text"=>$q["text"],
 			"type"=>$types[$q["type_id"]]["name"]
 		);
@@ -76,14 +155,23 @@ function survey_edit_form($form, $form_state, $survey = null){
 	$form["questions"] = array(
 		"#type"=>"tableselect",
 		"#header"=>array(
-			"weight"=>t("Weight"),
-			"page_id"=>t("Page"),
+			"name"=>t("Name"),			
 			"text"=>t("Text"),
-			"type"=>t("Type")
+			"type"=>t("Type"),
+			"page_id"=>t("Page"),
+			"weight"=>t("Weight"),
 		),
 		"#options"=>$options,
 		"#empty"=>isset($survey) ? l("Add question","survey/{$survey->id}/question/add") : t("No questions")
 	);
+	
+	if(isset($survey)){
+		$form["link-question-add"] = array(
+			"#markup"=>l("Add question","survey/{$survey->id}/question/add"),
+			"#prefix"=>"<div id=\"link-question-add-wrapper\">",
+			"#suffix"=>"</div><!-- #link-question-add-wrapper -->"
+		);
+	}
 	
 	if(isset($survey)){
 		$form["closed"] = array(

@@ -57,6 +57,11 @@ function survey_schema(){
 					"length"=>100,
 					"not null"=>true
 				),
+				"description"=>array(
+					"type"=>"varchar",
+					"length"=>500,
+					"not null"=>false
+				),
 				"weight"=>array(
 					"description"=>"survey page weight",
 					"type"=>"int",
@@ -140,6 +145,18 @@ function survey_schema(){
 					"description"=>"question text",
 					"type"=>"text",
 					"not null"=>true
+				),
+				"description"=>array(
+					"type"=>"varchar",
+					"length"=>500,
+					"not null"=>false
+				),
+				"is_required"=>array(
+					"description"=>"0 if not required, otherwise required",
+					"type"=>"int",
+					"unsigned"=>true,
+					"not null"=>true,
+					"default"=>0
 				)
 			),
 			"primary key"=>array(

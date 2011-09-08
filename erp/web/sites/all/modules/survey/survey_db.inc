@@ -64,19 +64,20 @@ class SurveyDb {
 		
 	}
 	
-	public static function survey_page_add($survey_id, $title, $weight){
+	public static function survey_page_add($survey_id, $title, $description, $weight){
 		
 		return db_insert("survey_pages")
 			->fields(array(
 				"survey_id"=>$survey_id,
 				"title"=>$title,
+				"description"=>$description,
 				"weight"=>$weight
 			))
 			->execute();
 		
 	}
 	
-	public static function survey_question_add($survey_id, $name, $text, $type_id, $page_id, $weight){
+	public static function survey_question_add($survey_id, $name, $text, $description, $type_id, $page_id, $weight, $required){
 		
 		return db_insert("survey_questions")
 			->fields(array(
@@ -85,7 +86,9 @@ class SurveyDb {
 				"type_id"=>$type_id,
 				"weight"=>$weight,
 				"name"=>$name,
-				"text"=>$text
+				"text"=>$text,
+				"description"=>$description,
+				"is_required"=>$required
 			))
 			->execute();
 		
@@ -107,13 +110,20 @@ class SurveyDb {
 		
 	}
 	
-	public static function get_questions($survey_id){
+	public static function get_questions($survey_id, $page_id = null){
 		
-		$results = db_select("survey_questions","a")
+		$qry = db_select("survey_questions","a")
 			->fields("a")
-			->condition("survey_id", $survey_id, "=")
-			->execute()
+			->condition("a.survey_id", $survey_id, "=");
+		
+		if(isset($page_id)){
+			$qry->condition("a.page_id", $page_id, "=");
+		}
+		
+		
+		$results = $qry->execute()
 			->fetchAll(PDO::FETCH_ASSOC);
+		
 		return $results;
 		
 	}
