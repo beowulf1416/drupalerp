@@ -449,7 +449,9 @@ function survey_question_form($form, $form_state, $survey = null, $question = nu
 	);
 	
 	$form["type-extras"] = array(
-		"#tree"=>true
+		"#tree"=>true,
+		"#prefix"=>"<div id=\"survey-type-ajax-result-wrapper\">",
+		"#suffix"=>"</div><!-- #survey-type-ajax-result-wrapper -->"
 	);
 	
 	_question_type_form_elements($form, $form_state, $survey, $question);
@@ -528,7 +530,7 @@ function _question_type_form_elements(&$form, $form_state, $survey, $question){
 
 function survey_question_form_type_callback($form, $form_state){
 	
-	// TODO
+	return $form["type-extras"];
 	
 }
 
@@ -582,7 +584,7 @@ function survey_question_form_submit($form, &$form_state){
 	
 }
 
-function survey_question_selection_form($form, $form_state, $survey = null, $question = null, $title = null, $value = null){
+function survey_question_option_form($form, $form_state, $survey = null, $question = null, $option = null){
 
 	$form["survey"] = array(
 		"#type"=>"value",
@@ -594,18 +596,23 @@ function survey_question_selection_form($form, $form_state, $survey = null, $que
 		"#value"=>$question
 	);
 	
+	$form["option"] = array(
+		"#type"=>"value",
+		"#value"=>$option
+	);
+	
 	$form["title"] = array(
 		"#type"=>"textfield",
 		"#title"=>t("Title"),
 		"#required"=>true,
-		"#default_value"=>$title
+		"#default_value"=>""
 	);
 	
 	$form["value"] = array(
 		"#type"=>"textfield",
 		"#title"=>t("Value"),
 		"#required"=>true,
-		"#default_value"=>$value
+		"#default_value"=>""
 	);
 	
 	$form["actions"]["cancel"] = array(
@@ -622,10 +629,10 @@ function survey_question_selection_form($form, $form_state, $survey = null, $que
 	
 }
 
-function survey_question_selection_form_validate($form, &$form_state){
+function survey_question_option_form_validate($form, &$form_state){
 	
 }
 
-function survey_question_selection_form_submit($form, &$form_state){
+function survey_question_option_form_submit($form, &$form_state){
 
 }

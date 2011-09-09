@@ -248,6 +248,12 @@ function survey_schema(){
 		"survey_question_options"=>array(
 			"description"=>"table of question selection options",
 			"fields"=>array(
+				"id"=>array(
+					"description"=>"pk, option id",
+					"type"=>"serial",
+					"unsigned"=>true,
+					"not null"=>true
+				),
 				"survey_id"=>array(
 					"description"=>"fk, surveys.id",
 					"type"=>"int",
@@ -272,6 +278,9 @@ function survey_schema(){
 					"length"=>100,
 					"not null"=>true
 				)
+			),
+			"primary key"=>array(
+				"id"=>"id"
 			),
 			"indexes"=>array(
 				"idx_survey_question_options_1"=>array(

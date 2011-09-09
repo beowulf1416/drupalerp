@@ -145,6 +145,34 @@ function survey_menu(){
 			"access arguments"=>array("create survey"),
 			"file"=>"survey.pages.inc",
 			"type"=>MENU_LOCAL_TASK
+		),
+		"survey/%survey/question/%survey_question/option/add"=>array(
+			"title"=>"Add Options",
+			"page callback"=>"drupal_get_form",
+			"page arguments"=>array("survey_question_option_form",1,3),
+			"access arguments"=>array("create survey"),
+			"file"=>"survey.pages.inc",
+			"type"=>MENU_NORMAL_ITEM
+		),
+		"survey/%survey/question/%survey_question/option/%survey_option"=>array(
+			"title"=>"View option",
+			"page callback"=>"survey_question_option_view",
+			"page arguments"=>array(1,3,5),
+			"access arguments"=>array("create survey"),
+			"file"=>"survey.pages.inc",
+			"type"=>MENU_NORMAL_ITEM
+		),
+		"survey/%survey/question/%survey_question/option/%survey_option/view"=>array(
+			"title"=>"View",
+			"type"=>MENU_DEFAULT_LOCAL_TASK
+		),
+		"survey/%survey/question/%survey_question/option/%survey_option/edit"=>array(
+			"title"=>"Edit",
+			"page callback"=>"drupal_get_form",
+			"page arguments"=>array("survey_question_option_form",1,3,5),
+			"access arguments"=>array("create survey"),
+			"file"=>"survey.pages.inc",
+			"type"=>MENU_LOCAL_TASK
 		)
 	);
 }
