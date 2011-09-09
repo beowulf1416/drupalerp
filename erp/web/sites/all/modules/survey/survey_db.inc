@@ -95,6 +95,22 @@ class SurveyDb {
 		
 	}
 	
+	public static function survey_question_update($question_id, $name, $text, $description, $type_id, $page_id, $weight, $required){
+		
+		db_update("survey_questions")
+			->fields(array(
+				"text"=>$name,
+				"description"=>$description,
+				"type_id"=>$type_id,
+				"page_id"=>$page_id,
+				"weight"=>$weight,
+				"is_required"=>$required
+			))
+			->condition("id", $question_id, "=")
+			->execute();
+		
+	}
+	
 	public static function get_question_types(){
 		
 		$qry = db_select("survey_question_types","a")
@@ -137,6 +153,18 @@ class SurveyDb {
 			->fields("a")
 			->condition("a.survey_id", $survey_id, "=")
 			->orderBy("a.weight")
+			->execute();
+		$results = $qry->fetchAll(PDO::FETCH_ASSOC);
+		return $results;
+		
+	}
+	
+	public static function option_get_all($survey_id, $question_id){
+		
+		$qry = db_select("survey_question_options","a")
+			->fields("a")
+			->condition("a.survey_id", $survey_id, "=")
+			->condition("a.question_id", $question_id, "=")
 			->execute();
 		$results = $qry->fetchAll(PDO::FETCH_ASSOC);
 		return $results;

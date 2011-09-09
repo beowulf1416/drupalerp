@@ -6,6 +6,12 @@ define("QTYPE_TRUE_FALSE",3);
 define("QTYPE_SELECT_SINGLE",4);
 define("QTYPE_SELECT_MULTI",5);
 
+define("ANSWER_TRUE",1);
+define("ANSWER_FALSE",0);
+
+define("ANSWER_YES",1);
+define("ANSWER_NO",0);
+
 define("Q_NOT_REQ_VALUE",0);	// indicates that a question is required
 
 function survey_permissions(){
@@ -284,4 +290,12 @@ function survey_questions_get_all($survey_id){
 
 function survey_question_add($survey_id, $name, $text, $description, $type_id, $page_id, $weight, $is_required){
 	return SurveyDb::survey_question_add($survey_id, $name, $text, $description, $type_id, $page_id, $weight, $is_required);
+}
+
+function survey_question_update($question_id, $name, $text, $description, $type_id, $page_id, $weight, $is_required){
+	return SurveyDb::survey_question_update($question_id, $name, $text, $description, $type_id, $page_id, $weight, $is_required);
+}
+
+function survey_question_options_get_all($survey_id, $question_id){
+	return SurveyDb::option_get_all($survey_id, $question_id);
 }

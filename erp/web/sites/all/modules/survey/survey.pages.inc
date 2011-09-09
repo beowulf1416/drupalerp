@@ -107,7 +107,39 @@ function _question_form_element(&$form_state, $page, $question){
 	
 	$question_id = $question["id"];
 	$type_id = $question["type_id"];
+	$default_value = isset($form_state["values"]["pages"]["page-{$page["id"]}"]["question={$question_id}"]) ?
+		$form_state["values"]["pages"]["page-{$page["id"]}"]["question={$question_id}"] : "";
 	switch($type_id){
+		case QTYPE_TRUE_FALSE:{
+			return array(
+				"#type"=>"radios",
+				"#title"=>t($question["text"]),
+				"#description"=>isset($question["description"]) ?
+					$question["description"] : "",
+				"#required"=>$question["is_required"] != Q_NOT_REQ_VALUE,
+				"#options"=>array(
+					ANSWER_TRUE=>t("True"),
+					ANSWER_FALSE=>t("False")
+				),
+				"#default_value"=>$default_value
+			);
+			break;
+		}
+		case QTYPE_YES_NO:{
+			return array(
+				"#type"=>"radios",
+				"#title"=>t($question["text"]),
+				"#description"=>isset($question["description"]) ?
+					$question["description"] : "",
+				"#required"=>$question["is_required"] != Q_NOT_REQ_VALUE,
+				"#options"=>array(
+					ANSWER_YES=>t("Yes"),
+					ANSWER_NO=>t("No")
+				),
+				"#default_value"=>$default_value
+			);
+			break;
+		}
 		default:{
 			return array(
 				"#type"=>"textfield",
@@ -115,8 +147,7 @@ function _question_form_element(&$form_state, $page, $question){
 				"#description"=>isset($question["description"]) ?
 					$question["description"] : "",
 				"#required"=>$question["is_required"] != Q_NOT_REQ_VALUE,
-				"#default_value"=>isset($form_state["values"]["pages"]["page-{$page["id"]}"]["question={$question_id}"]) ?
-					$form_state["values"]["pages"]["page-{$page["id"]}"]["question={$question_id}"] : ""
+				"#default_value"=>$default_value
 			);
 		}
 	}
@@ -417,57 +448,11 @@ function survey_question_form($form, $form_state, $survey = null, $question = nu
 		)
 	);
 	
-	$type_id = isset($form_state["values"]["type"]) ? $form_state["values"]["type"] : QTYPE_TEXT;
-	switch($type_id){
-		case QTYPE_TEXT:{
-			$form["example-type-text"] = array(
-				"#markup"=>isset($form_state["values"]["text"]) ? "<p>".$form_state["values"]["text"]."</p>" : "<p>Why is the sky blue?</p>",
-				"#prefix"=>"<div class=\"question-example\>",
-				"#suffix"=>"</div><!-- .question-example -->"
-			);
-			break;
-		}
-		case QTYPE_YES_NO:{
-			$form["example-type-yes-no"] = array(
-				"#markup"=>isset($form_state["values"]["text"]) ? "<p>".$form_state["values"]["text"]."</p>" : "<p>Why is the sky blue?</p>",
-				"#prefix"=>"<div class=\"question-example\>",
-				"#suffix"=>"</div><!-- .question-example -->"
-			);
-			break;
-		}
-		case QTYPE_TRUE_FALSE:{
-			$form["example-type-true-false"] = array(
-				"#markup"=>isset($form_state["values"]["text"]) ? "<p>".$form_state["values"]["text"]."</p>" : "<p>Why is the sky blue?</p>",
-				"#prefix"=>"<div class=\"question-example\>",
-				"#suffix"=>"</div><!-- .question-example -->"
-			);
-			break;
-		}
-		case QTYPE_SELECT_SINGLE:{
-			$form["example-type-yes-no"] = array(
-				"#markup"=>isset($form_state["values"]["text"]) ? "<p>".$form_state["values"]["text"]."</p>" : "<p>Why is the sky blue?</p>",
-				"#prefix"=>"<div class=\"question-example\>",
-				"#suffix"=>"</div><!-- .question-example -->"
-			);
-			break;
-		}
-		case QTYPE_SELECT_MULTI:{
-			$form["example-type-yes-no"] = array(
-				"#markup"=>isset($form_state["values"]["text"]) ? "<p>".$form_state["values"]["text"]."</p>" : "<p>Why is the sky blue?</p>",
-				"#prefix"=>"<div class=\"question-example\>",
-				"#suffix"=>"</div><!-- .question-example -->"
-			);
-			break;
-		}
-		default:{
-			$form["example-type-text"] = array(
-				"#markup"=>isset($form_state["values"]["text"]) ? "<p>".$form_state["values"]["text"]."</p>" : "<p>Why is the sky blue?</p>",
-				"#prefix"=>"<div class=\"question-example\>",
-				"#suffix"=>"</div><!-- .question-example -->"
-			);
-			break;
-		}
-	}
+	$form["type-extras"] = array(
+		"#tree"=>true
+	);
+	
+	_question_type_form_elements($form, $form_state, $survey, $question);
 	
 	$options = array();
 	$pages = survey_page_get_all($survey->id);
@@ -510,6 +495,37 @@ function survey_question_form($form, $form_state, $survey = null, $question = nu
 	
 }
 
+function _question_type_form_elements(&$form, $form_state, $survey, $question){
+	
+	$type_id = isset($form_state["values"]["type"]) ? $form_state["values"]["type"] : $question->type_id;
+	switch($type_id){
+		case QTYPE_SELECT_SINGLE:{
+			
+			$form["type-extras"]["question-{$question->id}"] = array(
+				"#tree"=>true
+			);
+			
+			$options = survey_question_options_get_all($survey->id, $question->id);
+			$form["type-extras"]["question-{$question->id}"]["selections"] = array(
+				"#type"=>"tableselect",
+				"#header"=>array(
+					"name"=>t("Name"),
+					"value"=>t("Value")
+				),
+				"#options"=>$options,
+				"#empty"=>t("No options set"),
+				"#required"=>false
+			);
+			
+			$form["type-extras"]["question-{$question->id}"]["link-option-add"] = array(
+				"#markup"=>l("Add option","survey/{$survey->id}/question/{$question->id}/options/add"),
+			);
+			break;
+		}
+	}
+	
+}
+
 function survey_question_form_type_callback($form, $form_state){
 	
 	// TODO
@@ -536,11 +552,13 @@ function survey_question_form_submit($form, &$form_state){
 				$page_id = isset($form_state["values"]["page"]) ? $form_state["values"]["page"] : 0;
 				$weight = isset($form_state["values"]["weight"]) ? $form_state["values"]["weight"] : 0;
 				$is_required = isset($form_state["values"]["required"]) ? $form_state["values"]["required"] : false;
+				
 				if(isset($question) && is_object($question) && isset($question->id)){
-					
+					survey_question_update($question->id, $name, $text, $desc, $type_id, $page_id, $weight, $is_required);
 				} else {
 					$question_id = survey_question_add($survey->id, $name, $text, $desc, $type_id, $page_id, $weight, $is_required);
 				}
+				
 				drupal_set_message(t("Saved survey question"));
 				$form_state["redirect"] = "survey/{$survey->id}/edit";
 			}catch(Exception $e){
