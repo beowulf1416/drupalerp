@@ -158,6 +158,24 @@ function _question_form_element(&$form_state, $survey, $page, $question){
 			);
 			break;
 		}
+		case QTYPE_SELECT_MULTI:{
+			$options = array();
+			$opts = survey_question_options_get_all($survey->id, $question_id);
+			foreach($opts as $o){
+				$options[$o["value"]] = $o["title"];
+			}
+				
+			return array(
+				"#type"=>"checkboxes",
+				"#title"=>t($question["text"]),
+				"#description"=>isset($question["description"]) ?
+					$question["description"] : "",
+				"#required"=>$question["is_required"] != Q_NOT_REQ_VALUE,
+				"#options"=>$options,
+				"#default_value"=>$default_value
+			);
+			break;
+		}
 		default:{
 			return array(
 				"#type"=>"textfield",
