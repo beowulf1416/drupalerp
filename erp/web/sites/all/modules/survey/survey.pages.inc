@@ -107,7 +107,7 @@ function _question_form_element(&$form_state, $survey, $page, $question){
 	
 	$question_id = $question["id"];
 	$type_id = $question["type_id"];
-	$default_value = isset($form_state["values"]["pages"]["page-{$page["id"]}"]["question={$question_id}"]) ?
+	$default_value = isset($form_state["values"]["pages"]["page-{$page["id"]}"]["question-{$question_id}"]) ?
 		$form_state["values"]["pages"]["page-{$page["id"]}"]["question={$question_id}"] : "";
 	switch($type_id){
 		case QTYPE_TRUE_FALSE:{
@@ -175,6 +175,16 @@ function _question_form_element(&$form_state, $survey, $page, $question){
 				"#default_value"=>$default_value
 			);
 			break;
+		}
+		case QTYPE_DATE:{
+			return array(
+				"#type"=>"date",
+				"#title"=>t($question["text"]),
+				"#description"=>isset($question["description"]) ?
+					$question["description"] : "",
+				"#required"=>$question["is_required"] != Q_NOT_REQ_VALUE,
+				"#default_value"=>$default_value
+			);
 		}
 		default:{
 			return array(
@@ -563,6 +573,36 @@ function _question_type_form_elements(&$form, $form_state, $survey, $question){
 				"#required"=>false
 			);
 			
+			$form["type-extras"]["question-{$question->id}"]["link-option-add"] = array(
+				"#markup"=>l("Add option","survey/{$survey->id}/question/{$question->id}/option/add"),
+			);
+			break;
+		}
+		case QTYPE_SELECT_MULTI:{
+				
+			$form["type-extras"]["question-{$question->id}"] = array(
+				"#tree"=>true
+			);
+				
+			$options = survey_question_options_get_all($survey->id, $question->id);
+			$opts = array();
+			foreach($options as $o){
+				$opts[$o["id"]] = array(
+					"title"=>l($o["title"],"survey/{$survey->id}/question/{$question->id}/option/{$o["id"]}/edit"),
+					"value"=>$o["value"]
+				);
+			}
+			$form["type-extras"]["question-{$question->id}"]["selections"] = array(
+				"#type"=>"tableselect",
+				"#header"=>array(
+					"title"=>t("Title"),
+					"value"=>t("Value")
+				),
+				"#options"=>$opts,
+				"#empty"=>t("No options set"),
+				"#required"=>false
+			);
+				
 			$form["type-extras"]["question-{$question->id}"]["link-option-add"] = array(
 				"#markup"=>l("Add option","survey/{$survey->id}/question/{$question->id}/option/add"),
 			);

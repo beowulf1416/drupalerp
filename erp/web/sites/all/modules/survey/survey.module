@@ -5,6 +5,8 @@ define("QTYPE_YES_NO",2);
 define("QTYPE_TRUE_FALSE",3);
 define("QTYPE_SELECT_SINGLE",4);
 define("QTYPE_SELECT_MULTI",5);
+define("QTYPE_NUMBER",6);
+define("QTYPE_DATE",7);
 
 define("ANSWER_TRUE",1);
 define("ANSWER_FALSE",0);

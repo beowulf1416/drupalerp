@@ -8,7 +8,9 @@ class SurveyDb {
 				array("id"=>QTYPE_YES_NO,"name"=>"yes/no"),
 				array("id"=>QTYPE_TRUE_FALSE,"name"=>"true/false"),
 				array("id"=>QTYPE_SELECT_SINGLE,"name"=>"single-select"),
-				array("id"=>QTYPE_SELECT_MULTI,"name"=>"multi-select")
+				array("id"=>QTYPE_SELECT_MULTI,"name"=>"multi-select"),
+				array("id"=>QTYPE_NUMBER,"name"=>"number"),
+				array("id"=>QTYPE_DATE,"name"=>"date")
 			);
 		
 		$qry = db_insert("survey_question_types")
