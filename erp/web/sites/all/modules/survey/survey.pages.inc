@@ -223,6 +223,7 @@ function survey_form_submit($form, &$form_state){
 		}
 		case "btn-finish":{
 			_save_survey_response($form_state);
+			$form_state["rebuild"] = false;
 			break;
 		}
 	} // switch

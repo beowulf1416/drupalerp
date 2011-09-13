@@ -7,6 +7,7 @@ define("QTYPE_SELECT_SINGLE",4);
 define("QTYPE_SELECT_MULTI",5);
 define("QTYPE_NUMBER",6);
 define("QTYPE_DATE",7);
+define("QTYPE_REGEX",8);
 
 define("ANSWER_TRUE",1);
 define("ANSWER_FALSE",0);
