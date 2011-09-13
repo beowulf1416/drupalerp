@@ -121,7 +121,9 @@ function _question_form_element(&$form_state, $survey, $page, $question){
 					ANSWER_TRUE=>t("True"),
 					ANSWER_FALSE=>t("False")
 				),
-				"#default_value"=>$default_value
+				"#default_value"=>$default_value,
+				"#prefix"=>"<div id=\"question-wrapper-{$question_id}\">",
+				"#suffix"=>"</div><!-- #question-wrapper-{$question_id} -->"
 			);
 			break;
 		}
@@ -136,7 +138,9 @@ function _question_form_element(&$form_state, $survey, $page, $question){
 					ANSWER_YES=>t("Yes"),
 					ANSWER_NO=>t("No")
 				),
-				"#default_value"=>$default_value
+				"#default_value"=>$default_value,
+				"#prefix"=>"<div id=\"question-wrapper-{$question_id}\">",
+				"#suffix"=>"</div><!-- #question-wrapper-{$question_id} -->"
 			);
 			break;
 		}
@@ -154,7 +158,9 @@ function _question_form_element(&$form_state, $survey, $page, $question){
 					$question["description"] : "",
 				"#required"=>$question["is_required"] != Q_NOT_REQ_VALUE,
 				"#options"=>$options,
-				"#default_value"=>$default_value
+				"#default_value"=>$default_value,
+				"#prefix"=>"<div id=\"question-wrapper-{$question_id}\">",
+				"#suffix"=>"</div><!-- #question-wrapper-{$question_id} -->"
 			);
 			break;
 		}
@@ -172,7 +178,9 @@ function _question_form_element(&$form_state, $survey, $page, $question){
 					$question["description"] : "",
 				"#required"=>$question["is_required"] != Q_NOT_REQ_VALUE,
 				"#options"=>$options,
-				"#default_value"=>$default_value == "" ? array() : $default_value
+				"#default_value"=>$default_value == "" ? array() : $default_value,
+				"#prefix"=>"<div id=\"question-wrapper-{$question_id}\">",
+				"#suffix"=>"</div><!-- #question-wrapper-{$question_id} -->"
 			);
 			break;
 		}
@@ -183,7 +191,9 @@ function _question_form_element(&$form_state, $survey, $page, $question){
 				"#description"=>isset($question["description"]) ?
 					$question["description"] : "",
 				"#required"=>$question["is_required"] != Q_NOT_REQ_VALUE,
-				"#default_value"=>$default_value
+				"#default_value"=>$default_value,
+				"#prefix"=>"<div id=\"question-wrapper-{$question_id}\">",
+				"#suffix"=>"</div><!-- #question-wrapper-{$question_id} -->"
 			);
 		}
 		default:{
@@ -193,7 +203,9 @@ function _question_form_element(&$form_state, $survey, $page, $question){
 				"#description"=>isset($question["description"]) ?
 					$question["description"] : "",
 				"#required"=>$question["is_required"] != Q_NOT_REQ_VALUE,
-				"#default_value"=>$default_value
+				"#default_value"=>$default_value,
+				"#prefix"=>"<div id=\"question-wrapper-{$question_id}\">",
+				"#suffix"=>"</div><!-- #question-wrapper-{$question_id} -->"
 			);
 		}
 	}
