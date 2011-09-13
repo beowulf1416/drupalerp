@@ -171,4 +171,29 @@ class SurveyDb {
 		
 	}
 	
+	public static function option_add($survey_id, $question_id, $title, $value){
+		
+		return db_insert("survey_question_options")
+			->fields(array(
+				"survey_id"=>$survey_id,
+				"question_id"=>$question_id,
+				"title"=>$title,
+				"value"=>$value
+			))
+			->execute();
+		
+	}
+	
+	public static function option_update($option_id, $title, $value){
+		
+		db_update("survey_question_options")
+			->fields(array(
+				"title"=>$title,
+				"value"=>$value
+			))
+			->condition("id", $option_id, "=")
+			->execute();
+		
+	}
+	
 }

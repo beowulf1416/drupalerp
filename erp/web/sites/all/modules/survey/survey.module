@@ -212,6 +212,15 @@ function survey_theme($existing, $type, $theme, $path){
 	
 }
 
+function survey_option_load($option_id, $reset = false){
+	$options = survey_option_load_multiple(array($option_id), $reset);
+	return reset($options);
+}
+
+function survey_option_load_multiple($option_ids = array(), $conditions = array(), $reset = false){
+	return entity_load("survey_question_option", $option_ids, $conditions, $reset);
+}
+
 function survey_entity_info(){
 	
 	return array(
@@ -251,6 +260,16 @@ function survey_entity_info(){
 						"access arguments"=>array("administer survey")
 					)
 				)
+			)
+		),
+		"survey_question_option"=>array(
+			"label"=>"Survey Question Option",
+			"controller class"=>"DrupalDefaultEntityController",
+			"base table"=>"survey_question_options",
+			"load hook"=>"survey_option_load",
+			"fieldable"=>false,
+			"entity keys"=>array(
+				"id"=>"id"
 			)
 		)
 	);

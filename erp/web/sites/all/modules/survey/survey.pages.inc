@@ -56,7 +56,7 @@ function survey_form($form, $form_state, $survey = null){
 				$question_id = $q["id"];
 				$type_id = $q["type_id"];
 				$form["pages"]["page-{$page_id}"]["question-{$question_id}"] = 
-					_question_form_element($form_state, $page, $q);
+					_question_form_element($form_state, $survey, $page, $q);
 			} // foreach
 			
 		} else {
@@ -103,7 +103,7 @@ function survey_form($form, $form_state, $survey = null){
 	
 }
 
-function _question_form_element(&$form_state, $page, $question){
+function _question_form_element(&$form_state, $survey, $page, $question){
 	
 	$question_id = $question["id"];
 	$type_id = $question["type_id"];
@@ -136,6 +136,24 @@ function _question_form_element(&$form_state, $page, $question){
 					ANSWER_YES=>t("Yes"),
 					ANSWER_NO=>t("No")
 				),
+				"#default_value"=>$default_value
+			);
+			break;
+		}
+		case QTYPE_SELECT_SINGLE:{
+			$options = array();
+			$opts = survey_question_options_get_all($survey->id, $question_id);
+			foreach($opts as $o){
+				$options[$o["value"]] = $o["title"];
+			}
+			
+			return array(
+				"#type"=>"radios",
+				"#title"=>t($question["text"]),
+				"#description"=>isset($question["description"]) ?
+					$question["description"] : "",
+				"#required"=>$question["is_required"] != Q_NOT_REQ_VALUE,
+				"#options"=>$options,
 				"#default_value"=>$default_value
 			);
 			break;
@@ -499,7 +517,8 @@ function survey_question_form($form, $form_state, $survey = null, $question = nu
 
 function _question_type_form_elements(&$form, $form_state, $survey, $question){
 	
-	$type_id = isset($form_state["values"]["type"]) ? $form_state["values"]["type"] : $question->type_id;
+	$type_id = isset($form_state["values"]["type"]) ? $form_state["values"]["type"] : 
+		(isset($question) ? $question->type_id : QTYPE_TEXT);
 	switch($type_id){
 		case QTYPE_SELECT_SINGLE:{
 			
@@ -508,19 +527,26 @@ function _question_type_form_elements(&$form, $form_state, $survey, $question){
 			);
 			
 			$options = survey_question_options_get_all($survey->id, $question->id);
+			$opts = array();
+			foreach($options as $o){
+				$opts[$o["id"]] = array(
+					"title"=>l($o["title"],"survey/{$survey->id}/question/{$question->id}/option/{$o["id"]}/edit"),
+					"value"=>$o["value"]
+				);
+			}
 			$form["type-extras"]["question-{$question->id}"]["selections"] = array(
 				"#type"=>"tableselect",
 				"#header"=>array(
-					"name"=>t("Name"),
+					"title"=>t("Title"),
 					"value"=>t("Value")
 				),
-				"#options"=>$options,
+				"#options"=>$opts,
 				"#empty"=>t("No options set"),
 				"#required"=>false
 			);
 			
 			$form["type-extras"]["question-{$question->id}"]["link-option-add"] = array(
-				"#markup"=>l("Add option","survey/{$survey->id}/question/{$question->id}/options/add"),
+				"#markup"=>l("Add option","survey/{$survey->id}/question/{$question->id}/option/add"),
 			);
 			break;
 		}
@@ -577,10 +603,16 @@ function survey_question_form_submit($form, &$form_state){
 			break;
 		}
 		case "btn-cancel":{
-			$form_state["redirect"] = "survey/{$survey->id}/edit";
+			$form_state["redirect"] = isset($survey) ? "survey/{$survey->id}/edit" : "survey/list";
 			break;
 		}
 	}
+	
+}
+
+function survey_question_option_view($survey, $question, $option){
+	
+	return "<pre>".print_r($option, true)."</pre>";
 	
 }
 
@@ -605,14 +637,14 @@ function survey_question_option_form($form, $form_state, $survey = null, $questi
 		"#type"=>"textfield",
 		"#title"=>t("Title"),
 		"#required"=>true,
-		"#default_value"=>""
+		"#default_value"=>isset($option) ? $option->title : ""
 	);
 	
 	$form["value"] = array(
 		"#type"=>"textfield",
 		"#title"=>t("Value"),
 		"#required"=>true,
-		"#default_value"=>""
+		"#default_value"=>isset($option) ? $option->value : ""
 	);
 	
 	$form["actions"]["cancel"] = array(
@@ -627,6 +659,8 @@ function survey_question_option_form($form, $form_state, $survey = null, $questi
 		"#value"=>t("Save")
 	);
 	
+	return $form;
+	
 }
 
 function survey_question_option_form_validate($form, &$form_state){
@@ -635,4 +669,26 @@ function survey_question_option_form_validate($form, &$form_state){
 
 function survey_question_option_form_submit($form, &$form_state){
 
+	$survey = $form_state["values"]["survey"];
+	$question = $form_state["values"]["question"];
+	$option = $form_state["values"]["option"];
+	switch($form_state["triggering_element"]["#name"]){
+		case "btn-save":{
+			$title = $form_state["values"]["title"];
+			$value = $form_state["values"]["value"];
+			if(isset($option)){
+				SurveyDb::option_update($option->id, $title, $value);
+			} else {
+				$option_id = SurveyDb::option_add($survey->id, $question->id, $title, $value);
+			}
+			drupal_set_message(t("Successfully saved question option"));
+			$form_state["redirect"] = "survey/{$survey->id}/question/{$question->id}/edit";
+			break;
+		}
+		case "btn-cancel":{
+			$form_state["redirect"] = "survey/{$survey->id}/question/{$question->id}/edit";
+			break;
+		}
+	}
+	
 }
