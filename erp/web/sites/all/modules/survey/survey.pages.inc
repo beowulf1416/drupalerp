@@ -172,7 +172,7 @@ function _question_form_element(&$form_state, $survey, $page, $question){
 					$question["description"] : "",
 				"#required"=>$question["is_required"] != Q_NOT_REQ_VALUE,
 				"#options"=>$options,
-				"#default_value"=>$default_value
+				"#default_value"=>$default_value == "" ? array() : $default_value
 			);
 			break;
 		}
