@@ -150,6 +150,44 @@ class SurveyDb {
 		
 	}
 	
+	public static function questions_get_dependencies($survey_id, $question_id){
+		
+		$qry = db_select("survey_question_dependency","a")
+			->fields("a")
+			->condition("a.survey_id", $survey_id, "=")
+			->condition("a.question_id", $question_id, "=")
+			->execute();
+		$results = $qry->fetchAll(PDO::FETCH_ASSOC);
+		return $results;
+		
+	}
+	
+	public static function questions_get_dependency($survey_id, $question_id, $dependency_question_id){
+		
+		$qry = db_select("survey_question_dependency","a")
+			->fields("a")
+			->condition("a.survey_id", $survey_id, "=")
+			->condition("a.question_id", $question_id, "=")
+			->condition("a.depends_question_id", $dependency_question_id, "=")
+			->execute();
+		$results = $qry->fetchAll(PDO::FETCH_ASSOC);
+		return $results;
+		
+	}
+	
+	public static function question_dependency_add($survey_id, $question_id, $dependency_question_id, $condition){
+		
+		db_insert("survey_question_dependency")
+			->fields(array(
+				"survey_id"=>$survey_id,
+				"question_id"=>$question_id,
+				"depends_question_id"=>$dependency_question_id,
+				"condition"=>$condition
+			))
+			->execute();
+		
+	}
+	
 	public static function get_pages($survey_id){
 		
 		$qry = db_select("survey_pages","a")

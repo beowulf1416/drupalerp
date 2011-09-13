@@ -8,6 +8,7 @@ define("QTYPE_SELECT_MULTI",5);
 define("QTYPE_NUMBER",6);
 define("QTYPE_DATE",7);
 define("QTYPE_REGEX",8);
+define("QTYPE_EMAIL",9);
 
 define("ANSWER_TRUE",1);
 define("ANSWER_FALSE",0);
@@ -176,6 +177,22 @@ function survey_menu(){
 			"access arguments"=>array("create survey"),
 			"file"=>"survey.pages.inc",
 			"type"=>MENU_LOCAL_TASK
+		),
+		"survey/%survey/question/%survey_question/dependency/add"=>array(
+			"title"=>"Add dependency",
+			"page callback"=>"drupal_get_form",
+			"page arguments"=>array("survey_question_dependency_form",1,3),
+			"access arguments"=>array("create survey"),
+			"file"=>"survey.pages.inc",
+			"type"=>MENU_NORMAL_ITEM
+		),
+		"survey/%survey/question/%survey_question/dependency/%survey_question"=>array(
+			"title"=>"Edit dependency",
+			"page callback"=>"drupal_get_form",
+			"page arguments"=>array("survey_question_dependency_form",1,3,5),
+			"access arguments"=>array("create survey"),
+			"file"=>"survey.pages.inc",
+			"type"=>MENU_NORMAL_ITEM
 		)
 	);
 }
@@ -336,6 +353,18 @@ function survey_page_add($survey_id, $title, $description, $weight){
 
 function survey_questions_get_all($survey_id){
 	return SurveyDb::get_questions($survey_id);
+}
+
+function survey_questions_dependencies($survey_id, $question_id){
+	return SurveyDb::questions_get_dependencies($survey_id, $question_id);
+}
+
+function survey_questions_dependency($survey_id, $question_id, $dependency_question_id){
+	return SurveyDb::questions_get_dependency($survey_id, $question_id, $dependency_question_id);
+}
+
+function survey_question_dependency_add($survey_id, $question_id, $dependency_question_id, $condition){
+	SurveyDb::question_dependency_add($survey_id, $question_id, $dependency_question_id, $condition);
 }
 
 function survey_question_add($survey_id, $name, $text, $description, $type_id, $page_id, $weight, $is_required){

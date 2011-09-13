@@ -8,4 +8,6 @@ files[] = survey_entity_controller.inc
 files[] = survey_question_entity_controller.inc
 files[] = survey_db.inc
 
+dependencies[] = php
+
 configure = admin/config/survey

@@ -201,6 +201,8 @@ function _question_form_element(&$form_state, $survey, $page, $question){
 }
 
 function survey_form_validate($form, &$form_state){
+	
+	
 
 }
 
@@ -528,6 +530,35 @@ function survey_question_form($form, $form_state, $survey = null, $question = nu
 		"#default_value"=>isset($question) ? $question->weight : 0
 	);
 	
+	// dependencies
+	$form["depends"] = array(
+		"#type"=>"fieldset",
+		"#title"=>t("Dependencies"),
+		"#description"=>t("Only show this question if the following conditions are met"),
+		"#tree"=>true,
+		"#collapsible"=>true,
+		"#collapsed"=>true
+	);
+	
+	if(isset($survey) && isset($question)){
+		$questions = survey_questions_dependencies($survey->id, $question->id);
+		
+		$options = array();
+		$form["depends"]["questions"] = array(
+			"#type"=>"tableselect",
+			"#header"=>array(
+				"name"=>t("Name"),
+				"condition"=>t("Condition")
+			),
+			"#options"=>$options,
+			"#empty"=>t("No dependencies")
+		);
+		
+		$form["depends"]["link-dependency-add"] = array(
+			"#markup"=>l("Add dependency","survey/{$survey->id}/question/{$question->id}/dependency/add")
+		);
+	}
+	
 	$form["actions"]["cancel"] = array(
 		"#type"=>"submit",
 		"#name"=>"btn-cancel",
@@ -741,6 +772,103 @@ function survey_question_option_form_submit($form, &$form_state){
 				$option_id = SurveyDb::option_add($survey->id, $question->id, $title, $value);
 			}
 			drupal_set_message(t("Successfully saved question option"));
+			$form_state["redirect"] = "survey/{$survey->id}/question/{$question->id}/edit";
+			break;
+		}
+		case "btn-cancel":{
+			$form_state["redirect"] = "survey/{$survey->id}/question/{$question->id}/edit";
+			break;
+		}
+	}
+	
+}
+
+function survey_question_dependency_form($form, $form_state, $survey, $question, $dependency_question = null){
+	
+	$form["survey"] = array(
+		"#type"=>"value",
+		"#value"=>$survey
+	);
+	
+	$form["question"] = array(
+		"#type"=>"value",
+		"#value"=>$question
+	);
+	
+	$form["dependency_question"] = array(
+		"#type"=>"value",
+		"#value"=>$dependency_question
+	);
+	
+	$form["question-name"] = array(
+		"#type"=>"textfield",
+		"#title"=>t("Name"),
+		"#value"=>$question->name
+	);
+	
+	$options = array();
+	$questions = survey_questions_get_all($survey->id);
+	foreach($questions as $q){
+		if($q["id"] != $question->id){
+			$options[$q["id"]] = $q["name"];
+		}
+	}
+	$form["dependency"] = array(
+		"#type"=>"select",
+		"#title"=>t("Dependency"),
+		"#required"=>true,
+		"#options"=>$options,
+		"#default_value"=>isset($dependency_question->id) ? $dependency_question->id : 0
+	);
+	
+	$form["condition"] = array(
+		"#type"=>"textarea",
+		"#title"=>t("Condition"),
+		"#required"=>true,
+		"#default_value"=>""
+	);
+	
+	$form["actions"]["cancel"] = array(
+		"#type"=>"submit",
+		"#name"=>"btn-cancel",
+		"#value"=>t("Cancel")
+	);
+	
+	$form["actions"]["save"] = array(
+		"#type"=>"submit",
+		"#name"=>"btn-save",
+		"#value"=>t("Save")
+	);
+	
+	return $form;
+	
+}
+
+function survey_question_dependency_form_validate($form, &$form_state){
+	
+	$condition = $form_state["values"]["condition"];
+	if(!is_bool(php_eval($condition))){
+		form_set_error("condition",t("Condition does not evaluate to true or false."));
+	}
+	
+}
+
+function survey_question_dependency_form_submit($form, &$form_state){
+
+	$survey = $form_state["values"]["survey"];
+	$question = $form_state["values"]["question"];
+	switch($form_state["triggering_element"]["#name"]){
+		case "btn-save":{
+			if(isset($form_state["values"]["dependency_question"])){
+				
+			} else {
+				survey_question_dependency_add(
+					$survey->id, 
+					$question->id, 
+					$form_state["values"]["dependency_question"], 
+					$form_state["values"]["condition"]);
+			}
+			drupal_set_message(t("Saved question dependency"));
 			$form_state["redirect"] = "survey/{$survey->id}/question/{$question->id}/edit";
 			break;
 		}
